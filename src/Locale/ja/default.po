@@ -1,0 +1,581 @@
+# LANGUAGE translation of CakePHP Application
+# Copyright NAME <EMAIL@ADDRESS>
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"POT-Creation-Date: 2019-11-18 09:45+0900\n"
+"PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
+"Last-Translator: NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+
+#: Controller/UsersController.php:233
+msgid "The {0} has been deleted."
+msgstr "ユーザー：{0}を削除しました。"
+
+#: Controller/UsersController.php:235
+msgid "The {0} could not be deleted. Please, try again."
+msgstr "ユーザー{0}を削除できません。再度実行してください。"
+
+
+#: Template/AccountReceivables/index.ctp:179
+#: Template/Bills/index_all.ctp:500
+#: Template/BusinessPartners/index.ctp:138
+#: Template/CostManagements/index.ctp:269
+#: Template/Dashboards/index.ctp:387
+#: Template/Orders/index.ctp:337
+#: Template/Staffs/index.ctp:139
+#: Template/Users/index.ctp:83
+#: Template/Works/index.ctp:363
+msgid "Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total"
+msgstr "{{page}} ページ ／ {{pages}},　全 {{count}} レコード中 {{current}} レコードを表示"
+
+
+
+#: Template/ContractRates/index.ctp:3
+#: Template/ContractRates/index.ctp:49
+#: Template/ContractRates/view.ctp:3
+#: Template/Users/index.ctp:51
+msgid "Actions"
+msgstr "操作"
+
+
+#: Template/ContractRates/index.ctp:89
+#: Template/Users/index.ctp:64
+#: View/Helper/PaginatorHelper.php:1269
+msgid "View"
+msgstr "閲覧"
+
+#: Template/ContractRates/index.ctp:90
+#: Template/Users/index.ctp:65
+msgid "Edit"
+msgstr "編集"
+
+#: Template/BusinessPartners/view.ctp:495
+#: Template/BusinessPartners/view.ctp:526
+#: Template/ContractRates/index.ctp:91
+#: Template/Orders/defaultedit.ctp:5
+#: Template/Users/index.ctp:66
+msgid "Delete"
+msgstr "削除"
+
+#: Template/BusinessPartners/view.ctp:495
+#: Template/BusinessPartners/view.ctp:526
+#: Template/ContractRates/index.ctp:91
+#: Template/ContractRates/view.ctp:5
+#: Template/Orders/defaultedit.ctp:7
+#: Template/Users/index.ctp:66
+msgid "Are you sure you want to delete # {0}?"
+msgstr "本当に# {0}を削除しますか？"
+
+
+#: Template/ContractRates/index.ctp:4
+#: Template/ContractRates/view.ctp:7
+msgid "New Contract Rate"
+msgstr ""
+
+#: Template/ContractRates/index.ctp:5
+#: Template/ContractRates/view.ctp:8
+msgid "List Business Partners"
+msgstr ""
+
+#: Template/ContractRates/index.ctp:6
+#: Template/ContractRates/view.ctp:9
+msgid "New Business Partner"
+msgstr ""
+
+#: Template/ContractRates/index.ctp:7
+#: Template/ContractRates/view.ctp:10
+msgid "List Contract Types"
+msgstr ""
+
+#: Template/ContractRates/index.ctp:8
+#: Template/ContractRates/view.ctp:11
+msgid "New Contract Type"
+msgstr ""
+
+#: Template/ContractRates/index.ctp:12
+msgid "Contract Rates"
+msgstr ""
+
+#: Template/ContractRates/index.ctp:99
+msgid "previous"
+msgstr ""
+
+#: Template/ContractRates/index.ctp:101
+msgid "next"
+msgstr ""
+
+#: Template/ContractRates/view.ctp:4
+msgid "Edit Contract Rate"
+msgstr ""
+
+#: Template/ContractRates/view.ctp:5
+msgid "Delete Contract Rate"
+msgstr ""
+
+#: Template/ContractRates/view.ctp:6
+msgid "List Contract Rates"
+msgstr ""
+
+#: Template/ContractRates/view.ctp:18
+msgid "Business Partner"
+msgstr ""
+
+#: Template/ContractRates/view.ctp:26
+msgid "Guaranty Charge Chest I Por"
+msgstr ""
+
+#: Template/ContractRates/view.ctp:30
+msgid "Guaranty Count Chest I Por"
+msgstr ""
+
+#: Template/ContractRates/view.ctp:34
+msgid "Additional Unit Price Chest I Por"
+msgstr ""
+
+#: Template/ContractRates/view.ctp:38
+msgid "Transportable Equipment Cost Chest I Por"
+msgstr ""
+
+#: Template/ContractRates/view.ctp:42
+msgid "Appointed Day Cost Chest I Por"
+msgstr ""
+
+#: Template/ContractRates/view.ctp:46
+msgid "Guaranty Charge Chest Dg Por"
+msgstr ""
+
+#: Template/ContractRates/view.ctp:50
+msgid "Guaranty Count Chest Dg Por"
+msgstr ""
+
+#: Template/ContractRates/view.ctp:54
+msgid "Additional Unit Price Chest Dg Por"
+msgstr ""
+
+#: Template/ContractRates/view.ctp:58
+msgid "Transportable Equipment Cost Chest Dg Por"
+msgstr ""
+
+#: Template/ContractRates/view.ctp:62
+msgid "Appointed Day Cost Chest Dg Por"
+msgstr ""
+
+#: Template/ContractRates/view.ctp:66
+msgid "Guaranty Charge Chest Dr Por"
+msgstr ""
+
+#: Template/ContractRates/view.ctp:70
+msgid "Guaranty Count Chest Dr Por"
+msgstr ""
+
+#: Template/ContractRates/view.ctp:74
+msgid "Additional Unit Price Chest Dr Por"
+msgstr ""
+
+#: Template/ContractRates/view.ctp:78
+msgid "Transportable Equipment Cost Chest Dr Por"
+msgstr ""
+
+#: Template/ContractRates/view.ctp:82
+msgid "Appointed Day Cost Chest Dr Por"
+msgstr ""
+
+#: Template/ContractRates/view.ctp:86
+msgid "Guaranty Charge Chest I Car"
+msgstr ""
+
+#: Template/ContractRates/view.ctp:90
+msgid "Guaranty Count Chest I Car"
+msgstr ""
+
+#: Template/ContractRates/view.ctp:94
+msgid "Additional Unit Price Chest I Car"
+msgstr ""
+
+#: Template/ContractRates/view.ctp:98
+msgid "Guaranty Charge Chest Dg Car"
+msgstr ""
+
+#: Template/ContractRates/view.ctp:102
+msgid "Guaranty Count Chest Dg Car"
+msgstr ""
+
+#: Template/ContractRates/view.ctp:106
+msgid "Additional Unit Price Chest Dg Car"
+msgstr ""
+
+#: Template/ContractRates/view.ctp:110
+msgid "Guaranty Charge Chest Dr Car"
+msgstr ""
+
+#: Template/ContractRates/view.ctp:114
+msgid "Guaranty Count Chest Dr Car"
+msgstr ""
+
+#: Template/ContractRates/view.ctp:118
+msgid "Additional Unit Price Chest Dr Car"
+msgstr ""
+
+#: Template/ContractRates/view.ctp:122
+msgid "Guaranty Charge Stom I Car"
+msgstr ""
+
+#: Template/ContractRates/view.ctp:126
+msgid "Guaranty Count Stom I Car"
+msgstr ""
+
+#: Template/ContractRates/view.ctp:130
+msgid "Additional Unit Price Stom I Car"
+msgstr ""
+
+#: Template/ContractRates/view.ctp:134
+msgid "Guaranty Charge Stom Dr Car"
+msgstr ""
+
+#: Template/ContractRates/view.ctp:138
+msgid "Guaranty Count Stom Dr Car"
+msgstr ""
+
+#: Template/ContractRates/view.ctp:142
+msgid "Additional Unit Price Stom Dr Car"
+msgstr ""
+
+#: Template/ContractRates/view.ctp:146
+msgid "Operating Cost"
+msgstr ""
+
+
+#: Template/Layout/error.ctp:35
+#: Template/Error/error400.ctp:36
+#: Template/Error/error500.ctp:41
+msgid "Error"
+msgstr "エラー"
+
+#: Template/Layout/error.ctp:43
+msgid "Back"
+msgstr "戻る"
+
+
+#: Template/Users/index.ctp:6
+msgid "New"
+msgstr "新規"
+
+#: Template/Users/index.ctp:16
+msgid "List"
+msgstr "一覧"
+
+#: Template/Users/index.ctp:29
+msgid "Search"
+msgstr "検索"
+
+#: View/Helper/CustomFormHelper.php:105
+#: View/Helper/CustomFormHelper.php:137
+msgid "Click here to change the file."
+msgstr "ファイル変更はここをクリック"
+
+#: Template/Error/error400.ctp:37
+msgid "The requested address {0} was not found on this server."
+msgstr "リクエストされたアドレス {0} はサーバー上に存在しません。"
+
+#: Template/Error/error500.ctp:39
+msgid "An Internal Error Has Occurred"
+msgstr "内部エラー発生"
+
+#: Controller/Component/AuthComponent.php:499
+msgid "You are not authorized to access that location."
+msgstr "その場所へのアクセス権限がありません。"
+
+#: Controller/Component/CsrfComponent.php:181
+#: Http/Middleware/CsrfProtectionMiddleware.php:227
+msgid "Missing CSRF token cookie"
+msgstr ""
+
+#: Controller/Component/CsrfComponent.php:185
+#: Http/Middleware/CsrfProtectionMiddleware.php:231
+msgid "CSRF token mismatch."
+msgstr ""
+
+#: Error/ExceptionRenderer.php:300
+msgid "Not Found"
+msgstr "見つかりません"
+
+#: Error/ExceptionRenderer.php:302
+msgid "An Internal Error Has Occurred."
+msgstr "内部エラー発生"
+
+#: Http/Response.php:2652
+msgid "The requested file contains `..` and will not be read."
+msgstr ""
+
+#: Http/Response.php:2673
+msgid "The requested file was not found"
+msgstr "リクエストされたファイルが見つかりません"
+
+#: I18n/Number.php:89
+msgid "{0,number,#,###.##} KB"
+msgstr ""
+
+#: I18n/Number.php:91
+msgid "{0,number,#,###.##} MB"
+msgstr ""
+
+#: I18n/Number.php:93
+msgid "{0,number,#,###.##} GB"
+msgstr ""
+
+#: I18n/Number.php:95
+msgid "{0,number,#,###.##} TB"
+msgstr ""
+
+#: I18n/Number.php:87
+msgid "{0,number,integer} Byte"
+msgid_plural "{0,number,integer} Bytes"
+msgstr[0] ""
+msgstr[1] ""
+
+#: I18n/RelativeTimeFormatter.php:80
+msgid "{0} from now"
+msgstr ""
+
+#: I18n/RelativeTimeFormatter.php:80
+msgid "{0} ago"
+msgstr ""
+
+#: I18n/RelativeTimeFormatter.php:83
+msgid "{0} after"
+msgstr ""
+
+#: I18n/RelativeTimeFormatter.php:83
+msgid "{0} before"
+msgstr ""
+
+#: I18n/RelativeTimeFormatter.php:114
+msgid "just now"
+msgstr ""
+
+#: I18n/RelativeTimeFormatter.php:151
+msgid "about a second ago"
+msgstr ""
+
+#: I18n/RelativeTimeFormatter.php:152
+msgid "about a minute ago"
+msgstr ""
+
+#: I18n/RelativeTimeFormatter.php:153
+msgid "about an hour ago"
+msgstr ""
+
+#: I18n/RelativeTimeFormatter.php:154
+#: I18n/RelativeTimeFormatter.php:332
+msgid "about a day ago"
+msgstr ""
+
+#: I18n/RelativeTimeFormatter.php:155
+#: I18n/RelativeTimeFormatter.php:333
+msgid "about a week ago"
+msgstr ""
+
+#: I18n/RelativeTimeFormatter.php:156
+#: I18n/RelativeTimeFormatter.php:334
+msgid "about a month ago"
+msgstr ""
+
+#: I18n/RelativeTimeFormatter.php:157
+#: I18n/RelativeTimeFormatter.php:335
+msgid "about a year ago"
+msgstr ""
+
+#: I18n/RelativeTimeFormatter.php:168
+msgid "in about a second"
+msgstr ""
+
+#: I18n/RelativeTimeFormatter.php:169
+msgid "in about a minute"
+msgstr ""
+
+#: I18n/RelativeTimeFormatter.php:170
+msgid "in about an hour"
+msgstr ""
+
+#: I18n/RelativeTimeFormatter.php:171
+#: I18n/RelativeTimeFormatter.php:346
+msgid "in about a day"
+msgstr ""
+
+#: I18n/RelativeTimeFormatter.php:172
+#: I18n/RelativeTimeFormatter.php:347
+msgid "in about a week"
+msgstr ""
+
+#: I18n/RelativeTimeFormatter.php:173
+#: I18n/RelativeTimeFormatter.php:348
+msgid "in about a month"
+msgstr ""
+
+#: I18n/RelativeTimeFormatter.php:174
+#: I18n/RelativeTimeFormatter.php:349
+msgid "in about a year"
+msgstr ""
+
+#: I18n/RelativeTimeFormatter.php:304
+msgid "today"
+msgstr ""
+
+#: I18n/RelativeTimeFormatter.php:370
+msgid "%s ago"
+msgstr ""
+
+#: I18n/RelativeTimeFormatter.php:371
+msgid "on %s"
+msgstr ""
+
+#: I18n/RelativeTimeFormatter.php:47
+#: I18n/RelativeTimeFormatter.php:126
+#: I18n/RelativeTimeFormatter.php:316
+msgid "{0} year"
+msgid_plural "{0} years"
+msgstr[0] ""
+msgstr[1] ""
+
+#: I18n/RelativeTimeFormatter.php:51
+#: I18n/RelativeTimeFormatter.php:129
+#: I18n/RelativeTimeFormatter.php:319
+msgid "{0} month"
+msgid_plural "{0} months"
+msgstr[0] ""
+msgstr[1] ""
+
+#: I18n/RelativeTimeFormatter.php:57
+#: I18n/RelativeTimeFormatter.php:132
+#: I18n/RelativeTimeFormatter.php:322
+msgid "{0} week"
+msgid_plural "{0} weeks"
+msgstr[0] ""
+msgstr[1] ""
+
+#: I18n/RelativeTimeFormatter.php:59
+#: I18n/RelativeTimeFormatter.php:135
+#: I18n/RelativeTimeFormatter.php:325
+msgid "{0} day"
+msgid_plural "{0} days"
+msgstr[0] ""
+msgstr[1] ""
+
+#: I18n/RelativeTimeFormatter.php:64
+#: I18n/RelativeTimeFormatter.php:138
+msgid "{0} hour"
+msgid_plural "{0} hours"
+msgstr[0] ""
+msgstr[1] ""
+
+#: I18n/RelativeTimeFormatter.php:68
+#: I18n/RelativeTimeFormatter.php:141
+msgid "{0} minute"
+msgid_plural "{0} minutes"
+msgstr[0] ""
+msgstr[1] ""
+
+#: I18n/RelativeTimeFormatter.php:72
+#: I18n/RelativeTimeFormatter.php:144
+msgid "{0} second"
+msgid_plural "{0} seconds"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ORM/RulesChecker.php:56
+msgid "This value is already in use"
+msgstr "この値はすでに使われています"
+
+#: ORM/RulesChecker.php:103
+msgid "This value does not exist"
+msgstr "この値は存在しません"
+
+#: ORM/RulesChecker.php:127
+msgid "The count does not match {0}{1}"
+msgstr "件数が {0}{1} と一致していません"
+
+#: Utility/Text.php:933
+msgid "and"
+msgstr ""
+
+#: Validation/Validator.php:2436
+#: View/Form/ArrayContext.php:225
+msgid "This field is required"
+msgstr "このフィールドは必須項目です"
+
+#: Validation/Validator.php:2458
+msgid "This field cannot be left empty"
+msgstr "このフィールドは空白にはできません"
+
+#: Validation/Validator.php:2608
+msgid "The provided value is invalid"
+msgstr "与えられた値は無効です"
+
+#: View/Helper/FormHelper.php:1107
+msgid "Edit {0}"
+msgstr ""
+
+#: View/Helper/FormHelper.php:1109
+msgid "New {0}"
+msgstr ""
+
+#: View/Helper/HtmlHelper.php:818
+msgid "Home"
+msgstr ""
+
+#: View/Widget/DateTimeWidget.php:539
+msgid "January"
+msgstr "1月"
+
+#: View/Widget/DateTimeWidget.php:540
+msgid "February"
+msgstr "2月"
+
+#: View/Widget/DateTimeWidget.php:541
+msgid "March"
+msgstr "3月"
+
+#: View/Widget/DateTimeWidget.php:542
+msgid "April"
+msgstr "4月"
+
+#: View/Widget/DateTimeWidget.php:543
+msgid "May"
+msgstr "5月"
+
+#: View/Widget/DateTimeWidget.php:544
+msgid "June"
+msgstr "6月"
+
+#: View/Widget/DateTimeWidget.php:545
+msgid "July"
+msgstr "7月"
+
+#: View/Widget/DateTimeWidget.php:546
+msgid "August"
+msgstr "8月"
+
+#: View/Widget/DateTimeWidget.php:547
+msgid "September"
+msgstr "9月"
+
+#: View/Widget/DateTimeWidget.php:548
+msgid "October"
+msgstr "10月"
+
+#: View/Widget/DateTimeWidget.php:549
+msgid "November"
+msgstr "11月"
+
+#: View/Widget/DateTimeWidget.php:550
+msgid "December"
+msgstr "12月"
+
