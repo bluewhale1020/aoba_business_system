@@ -139,7 +139,7 @@ class BusinessPartnersTable extends Table
             // ->add('lft', 'valid', ['rule' => 'numeric'])
         // //    ->requirePresence('lft', 'create')
             // ->notEmpty('lft');
-//     
+     
         // $validator
             // ->add('rght', 'valid', ['rule' => 'numeric'])
         // //    ->requirePresence('rght', 'create')
@@ -185,6 +185,39 @@ class BusinessPartnersTable extends Table
         return $rules;
     }
 
+
+    /**
+     * 検索用の[請負元id=>派遣先]リストを返す
+     * 
+     * @return array $sortedOptions [請負元id=>派遣先]リスト
+     */
+    public function getSortedOptions() {
+        $workPlaceOptions = $this->find('all')->where(['WorkPlaces.is_work_place' => 1])->limit(200)->toArray();
+
+        return $this->sortOptions($workPlaceOptions);
+
+    }
+
+     /**
+     * 検索リストの整形
+     * 
+     * @param array $workPlaceOptions workplaceデータの配列
+     * 
+     * @return array $sortedOptions [請負元id=>派遣先]リスト
+     */
+    protected function sortOptions($workPlaceOptions)
+    {
+        $sortedOptions = [];
+        foreach ($workPlaceOptions as $key => $workPlace) {
+            if(empty($workPlace['parent_id'])){
+                $sortedOptions[$workPlace['id']][] = $workPlace;
+            }else{
+                $sortedOptions[$workPlace['parent_id']][] = $workPlace;
+            }
+        }
+
+        return $sortedOptions;
+    }
 
     //インポートデータから
     //     定休日[日月火水木金土] を 0~6　の数字に

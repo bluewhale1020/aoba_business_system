@@ -484,7 +484,7 @@ class OrdersTable extends Table
         foreach ($orders as $key => $data) {
             $sales = $received = $charged = 0;
             
-            $sales =floor(($data['guaranty_charge'] + 
+            $sales =(int) floor(($data['guaranty_charge'] + 
                     $data['additional_charge'] + $data['other_charge']) * 1.1);
        
        
@@ -517,6 +517,7 @@ class OrdersTable extends Table
             
         }
         
+        ksort($accountReceivables);
         return $accountReceivables;
     }
 
@@ -538,6 +539,24 @@ class OrdersTable extends Table
              return $orders;   
          
      }
+     /**
+      * 受注番号の最後＋１を返す 
+      *
+      *@return string $order_no
+      */
+      public function getLatestOrderNo()
+      {
+        $lastNo = $this->find()
+            ->select(['order_no' => 'MAX(cast(Orders.order_no as unsigned))'])
+            ->first();
+        if ($lastNo and !empty($lastNo->order_no)) {
+            $order_no = $lastNo->order_no + 1;
+        } else {
+            $order_no = "";
+        }          
+
+        return $order_no;
+      }
     
     
 }

@@ -52,7 +52,7 @@ class WorksController extends AppController
                               
             }            
             
-                debug($conditions);
+                // debug($conditions);
 
             //  $works = $this->Works->find()
             // ->contain(['Orders'=>['Clients','WorkPlaces',  'WorkContents', 'CapturingRegions','FilmSizes'],
@@ -105,28 +105,12 @@ class WorksController extends AppController
               ->eq('Clients.is_work_place', 1)
               ->isNull('Clients.parent_id');
           })->limit(200);
-        $workPlaceOptions = $this->Orders->WorkPlaces->find('all')->where(['WorkPlaces.is_work_place' => 1])->limit(200)->toArray();
-        
-        $sortedOptions = [];
-        foreach ($workPlaceOptions as $key => $workPlace) {
-            if(empty($workPlace['parent_id'])){
-                $sortedOptions[$workPlace['id']][] = $workPlace;
-            }else{
-                $sortedOptions[$workPlace['parent_id']][] = $workPlace;
-            }
-        }       
-    //    debug($sortedOptions);
+      
+        $sortedOptions = $this->Orders->WorkPlaces->getSortedOptions();
+        //    debug($sortedOptions);
         $workContents = $this->Orders->WorkContents->find('list', ['limit' => 200])->toArray();
 
-        $this->set(compact('orders','clients','sortedOptions','workContents'));
-        $this->set('_serialize', ['orders']);        
-        
-        // $this->paginate = [
-            // 'contain' => ['Orders', 'Equipments', 'Staffs']
-        // ];
-        // $works = $this->paginate($this->Works);
-
-        $this->set(compact('works'));
+        $this->set(compact('works','clients','sortedOptions','workContents'));
         $this->set('_serialize', ['works']);
     }
 
@@ -247,21 +231,8 @@ class WorksController extends AppController
         
         //使用期間データ作成
         $work = $this->Works->EquipmentRentals->getRentalPeriod($work);
-        if(!empty($work->A_start_date)){
-            $work->A_date_range = $work->A_start_date . " - " .$work->A_end_date;        
-        }
-        if(!empty($work->B_start_date)){
-            $work->B_date_range = $work->B_start_date . " - " .$work->B_end_date;        
-        }
-        if(!empty($work->C_start_date)){
-            $work->C_date_range = $work->C_start_date . " - " .$work->C_end_date;        
-        }
-        if(!empty($work->D_start_date)){
-            $work->D_date_range = $work->D_start_date . " - " .$work->D_end_date;        
-        }
-        if(!empty($work->E_start_date)){
-            $work->E_date_range = $work->E_start_date . " - " .$work->E_end_date;        
-        }
+
+        $work = $this->Works->setRentalDateRange($work);
 
         
         $order = $this->Works->Orders->find()->contain(['Clients','WorkPlaces','CapturingRegions','FilmSizes'])
@@ -279,35 +250,17 @@ class WorksController extends AppController
         $this->set(compact('work', 'order', 'equipments','equipment_types','staffs','technicians'));
         $this->set('_serialize', ['work']);
     }
-
-    /**
-     * Delete method
-     *
-     * @param string|null $id Work id.
-     * @return \Cake\Network\Response|null Redirects to index.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    // public function delete($id = null)
-    // {
-        // $this->request->allowMethod(['post', 'delete']);
-        // $work = $this->Works->get($id);
-        // if ($this->Works->delete($work)) {
-            // $this->Flash->success(__('The work has been deleted.'));
-        // } else {
-            // $this->Flash->error(__('The work could not be deleted. Please, try again.'));
-        // }
-// 
-        // return $this->redirect(['action' => 'index']);
-    // }
     
     
     
-    function ajaxsaveworksatus(){
+    public function ajaxsaveworksatus(){
         
             // ajaxによる呼び出し？
         if($this->request->is("ajax")) {
-            $work_id = $_POST['work_id'];
-            $value = $_POST['value'];
+            $work_id = $this->request->data['work_id'];
+            $value = $this->request->data['value'];
+            // $work_id = $_POST['work_id'];
+            // $value = $_POST['value'];
    
             $work = $this->Works->get($work_id, [
                 'contain' => []
@@ -324,8 +277,8 @@ class WorksController extends AppController
              
  
         }
-
-        $this->set('result',$result);      
+        return $this->response->withStringBody(json_encode($result));
+        // $this->set('result',$result);      
                
     }  
     

@@ -66,7 +66,10 @@ class NotificationsComponentTest extends TestCase
      */
     public function testGetNotificationInfo()
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $result = $this->Notifications->getNotificationInfo();
+
+        $expected = 5;
+        $this->assertEquals($expected, $result['totalcount']);
     }
 
     /**

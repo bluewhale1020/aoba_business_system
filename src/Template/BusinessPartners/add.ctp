@@ -43,7 +43,7 @@ $(document).ready(function(){
 
     $('#postal-code').blur(function(){
         
-        $('#検索btn').trigger('click');
+        // $('#検索btn').trigger('click');
         
     }); 
     

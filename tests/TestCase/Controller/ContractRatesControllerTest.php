@@ -2,13 +2,18 @@
 namespace App\Test\TestCase\Controller;
 
 use App\Controller\ContractRatesController;
-use Cake\TestSuite\IntegrationTestCase;
+use Cake\TestSuite\IntegrationTestTrait;
+use Cake\TestSuite\TestCase;
+use Cake\ORM\TableRegistry;
 
 /**
  * App\Controller\ContractRatesController Test Case
+ *
+ * @uses \App\Controller\ContractRatesController
  */
-class ContractRatesControllerTest extends IntegrationTestCase
+class ContractRatesControllerTest extends TestCase
 {
+    use IntegrationTestTrait;
 
     /**
      * Fixtures
@@ -16,91 +21,58 @@ class ContractRatesControllerTest extends IntegrationTestCase
      * @var array
      */
     public $fixtures = [
-        'app.contract_rates',
-        'app.business_partners',
-        'app.bills',
-        'app.orders',
-        'app.client',
-        'app.order1',
-        'app.work_place',
-        'app.order2',
-        'app.work_contents',
-        'app.capturing_regions',
-        'app.radiography_types',
-        'app.works',
-        'app.equipment1',
-        'app.equipment_types',
-        'app.equipments',
-        'app.statuses',
-        'app.work1',
-        'app.equipment2',
-        'app.work2',
-        'app.equipment3',
-        'app.work3',
-        'app.equipment4',
-        'app.work4',
-        'app.equipment5',
-        'app.work5',
-        'app.staff1',
-        'app.occupation1',
-        'app.staff2',
-        'app.occupation2',
-        'app.titles',
-        'app.staffs',
-        'app.work6',
-        'app.staff3',
-        'app.work7',
-        'app.staff4',
-        'app.work8',
-        'app.staff5',
-        'app.work9',
-        'app.staff6',
-        'app.work10',
-        'app.staff7',
-        'app.work11',
-        'app.staff8',
-        'app.work12',
-        'app.staff9',
-        'app.work13',
-        'app.staff10',
-        'app.work14',
-        'app.technician1',
-        'app.work15',
-        'app.technician2',
-        'app.work16',
-        'app.technician3',
-        'app.work17',
-        'app.technician4',
-        'app.work18',
-        'app.technician5',
-        'app.work19',
-        'app.technician6',
-        'app.work20',
-        'app.technician7',
-        'app.technician8',
-        'app.technician9',
-        'app.technician10',
-        'app.contract_types'
+        'app.ContractRates',
+        'app.BusinessPartners'
     ];
 
+    protected function setUserSession()
+    {
+        $this->session(['Auth' => [
+            'User' => [
+                'id' => 4,
+                'username' => 'admin',
+                'role' => 'admin',
+            ]
+        ]]);
+    }    
     /**
-     * Test index method
+     * setUp method
      *
      * @return void
      */
-    public function testIndex()
+    public function setUp()
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        parent::setUp();
+        $this->setUserSession();
+        $this->ContractRates = TableRegistry::get('ContractRates');
+    }
+    /**
+     * tearDown method
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        unset($this->ContractRates);
+
+        parent::tearDown();
     }
 
     /**
-     * Test view method
+     * Test manage method
      *
      * @return void
      */
-    public function testView()
+    public function testManage()
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $this->get('/ContractRates/manage/1');
+        $this->assertResponseCode(302);
+        $this->assertRedirect(['action' => 'edit',3,1]);        
+        
+        
+        $this->get('/ContractRates/manage/2');
+        $this->assertResponseCode(302);
+        $this->assertRedirect(['action' => 'add',2]);        
     }
 
     /**
@@ -110,7 +82,22 @@ class ContractRatesControllerTest extends IntegrationTestCase
      */
     public function testAdd()
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $count = $this->ContractRates->find()->count();
+        $token = 'my-csrf-token';
+        $this->cookie('csrfToken', $token);
+
+        $data = [
+            'business_partner_id' => 2,
+            'guaranty_charge_chest_i_por' => 1000,
+            'additional_unit_price_chest_dg_por' => 2000,
+            'guaranty_charge_stom_i_car' => 2000,
+            'additional_unit_price_stom_dr_car' => 1000,
+            'operating_cost' => 8000,
+            '_csrfToken' => $token            
+        ];
+        $this->post('/ContractRates/add/2', $data);
+        $this->assertRedirect(['controller'=>'BusinessPartners','action' => 'view',2]);    
+        $this->assertEquals($count+1, $this->ContractRates->find()->count());
     }
 
     /**
@@ -120,7 +107,27 @@ class ContractRatesControllerTest extends IntegrationTestCase
      */
     public function testEdit()
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $token = 'my-csrf-token';
+        
+        $this->cookie('csrfToken', $token);
+        
+        $data = [
+            'id'=>3,
+            'business_partner_id' => 1,
+            'guaranty_charge_chest_i_por' => 1000,
+            'additional_unit_price_chest_dg_por' => 2000,
+            'guaranty_charge_stom_i_car' => 2000,
+            'additional_unit_price_stom_dr_car' => 1000,
+            'operating_cost' => 8000,                  
+            '_csrfToken' => $token            
+        ];
+        $this->post('/ContractRates/edit/3/1', $data);
+        $this->assertFlashElement('Flash/success');
+        $this->assertRedirect(['controller'=>'BusinessPartners','action' => 'view',1]);    
+        $query = $this->ContractRates->get(3);
+        $this->assertEquals($data['guaranty_charge_chest_i_por'], $query->guaranty_charge_chest_i_por);
+        $this->assertEquals($data['guaranty_charge_stom_i_car'], $query->guaranty_charge_stom_i_car);
+        $this->assertEquals($data['operating_cost'], $query->operating_cost);
     }
 
     /**
@@ -130,6 +137,68 @@ class ContractRatesControllerTest extends IntegrationTestCase
      */
     public function testDelete()
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $token = 'my-csrf-token';
+        $this->cookie('csrfToken', $token);
+        $this->configRequest([
+            'headers' => [
+                'X-CSRF-Token' => $token,
+            ]
+        ]);
+
+        $this->delete('/ContractRates/delete/1');
+        $this->assertRedirect(['controller'=>'BusinessPartners','action' => 'view',1]);    
+        $this->assertFlashElement('Flash/success');
+        $query = $this->ContractRates->find()->where(['id' => 1])->first();
+        $this->assertEmpty($query);
+
+        $this->cookie('csrfToken', $token);
+        $this->configRequest([
+            'headers' => [
+                'X-CSRF-Token' => $token,
+            ]
+        ]);
+
+        $this->delete('/ContractRates/delete/2');
+        $this->assertRedirect(['controller'=>'BusinessPartners','action' => 'view',2]);    
+        $this->assertFlashElement('Flash/error');
+    }
+
+    /**
+     * Test ajaxloadcontractrates method
+     *
+     * @return void
+     */
+    public function testAjaxloadcontractrates()
+    {
+        $token = 'my-csrf-token';
+        $this->cookie('csrfToken', $token);
+
+        $this->configRequest([
+            'headers' => [
+                'X-Requested-With' => 'XMLHttpRequest',
+                'X-CSRF-Token' => $token,
+            ],
+        ]);
+        $this->post('/ContractRates/ajaxloadcontractrates', ["client_id" => 1]);
+        $this->assertResponseCode(200);
+
+        $response_data = json_decode($this->_response->getBody(),true);
+        // debug($response_data);
+        $this->assertEquals(10000, $response_data['operating_cost']);        
+        $this->assertEquals(1, $response_data['business_partner_id']);        
+
+        $this->cookie('csrfToken', $token);
+
+        $this->configRequest([
+            'headers' => [
+                'X-Requested-With' => 'XMLHttpRequest',
+                'X-CSRF-Token' => $token,
+            ],
+        ]);        
+
+        $this->post('/ContractRates/ajaxloadcontractrates', ["client_id" => 2]);
+        $this->assertResponseCode(400); 
+
+
     }
 }

@@ -187,7 +187,7 @@ $this->Html->script(
         },
         error:function(XHR, status, errorThrown){
             if(XHR.responseJSON.message != null){
-                alert(XHR.responseJSON.message);
+                // alert(XHR.responseJSON.message);
             }else{
                 alert(status)
             }

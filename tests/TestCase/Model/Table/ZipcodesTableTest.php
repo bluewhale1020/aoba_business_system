@@ -52,6 +52,20 @@ class ZipcodesTableTest extends TestCase
     }
 
     /**
+     * test getAddress  method
+     *
+     * @return void
+     */    
+    public function testGetAddress(){
+        $data = "130021";
+
+        $result = $this->Zipcodes->getAddress($data);
+        $expected = "墨田区緑";
+        $this->assertEquals($expected, $result);        
+    }
+
+
+    /**
      * Test initialize method
      *
      * @return void

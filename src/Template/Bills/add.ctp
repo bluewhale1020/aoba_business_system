@@ -31,7 +31,10 @@ $(document).ready(function(){
 
     jQuery("#list").jqGrid({
          url:"/aoba_business_system/bills/ajaxcreatebilldetails/" + "<?=$check_str ?>",
-          datatype: "json",
+         loadBeforeSend: function(jqXHR) {
+            jqXHR.setRequestHeader('X-CSRF-Token', <?= json_encode($this->request->getParam('_csrfToken')); ?>);
+        },
+         datatype: "json",
           mtype: 'POST',
           colNames:['id','order_id','受注No','摘要','保証料金','保証人数','追加人数','追加料金単価','その他料金','小計'],
           colModel :[ 

@@ -7,6 +7,7 @@ use PHPExcel_CachedObjectStorageFactory;
 use Cake\Core\Configure;
 use Cake\ORM\TableRegistry;
 use Cake\I18n\Number;
+use Cake\Log\Log;
 // use \PhpOffice\PhpWord\PhpWord;
 // use \PhpOffice\PhpWord\IOFactory;
 // use fpdi\FPDI;
@@ -599,79 +600,61 @@ class PrintersController extends AppController {
     public function printLabelSheet($order_id)
     {
         
-            Configure::write("debug",false);
- 
-             // 保存ファイルフルパス
-             $filename = "work_label.docx";
-            $uploadDir = realpath(TMP);
-            $uploadDir .= DS . 'words' . DS;
-            $loadDir = $uploadDir . 'template' . DS;
-            $path = $loadDir . $filename;
-             $savepath = $uploadDir . $filename;
+        Configure::write("debug",false);
+
+        // 保存ファイルフルパス
+        $filename = "work_label.docx";
+        $uploadDir = realpath(TMP);
+        $uploadDir .= DS . 'words' . DS;
+        $loadDir = $uploadDir . 'template' . DS;
+        $path = $loadDir . $filename;
+        $savepath = $uploadDir . $filename;
   
-        if(copy($path, $savepath)){
+        if(copy($path, $savepath)){            
+
+                //注文データ取得
+            $table = TableRegistry::get('Orders');            
+            $order = $table->get($order_id, [
+                'contain' => ['Clients','WorkPlaces', 'WorkContents', 'CapturingRegions', 'FilmSizes', 'Works']
+            ]);
+    
             
+            //撮影期間
+            $date_range = $order->start_date->format("Y年m/d") . " ~ " .$order->end_date->format("m/d");
 
-               //注文データ取得
-           $table = TableRegistry::get('Orders');            
-        $order = $table->get($order_id, [
-            'contain' => ['Clients','WorkPlaces', 'WorkContents', 'CapturingRegions', 'FilmSizes', 'Works']
-        ]);
- 
+            // 事業所名  
+            if($order->has('work_place')){
+                $work_place = $order->work_place->name;
+            }else{
+                $work_place = '';
+            }
+    
+    
         
-        //撮影期間
-        $date_range = $order->start_date->format("Y年m/d") . " ~ " .$order->end_date->format("m/d");
 
-        // 事業所名  
-        if($order->has('work_place')){
-            $work_place = $order->work_place->name;
-        }else{
-            $work_place = '';
-        }
-  
-  
-     
+            $zip = new \ZipArchive;
+            if ($zip->open($savepath) === TRUE) {
+            
+                $xmlString = $zip->getFromName('word/document.xml');
+                $xmlString = str_replace('date_range', $date_range, $xmlString);
+                $xmlString = str_replace('work_place', $work_place, $xmlString); 
+                $zip->addFromString('word/document.xml', $xmlString);
+            
+                $zip->close();
+            } else {
+                throw new Exception('プレースホルダーの置き換え処理に失敗しました。');
+            }
 
-        $zip = new \ZipArchive;
-        if ($zip->open($savepath) === TRUE) {
+            $this -> set('filename', $filename);
+            
+            $this -> set('path', $savepath);
+
+            $this->layout = false;            
         
-         $xmlString = $zip->getFromName('word/document.xml');
-         $xmlString = str_replace('date_range', $date_range, $xmlString);
-         $xmlString = str_replace('work_place', $work_place, $xmlString); 
-            $zip->addFromString('word/document.xml', $xmlString);
-        
-         //echo 'ok';
-        
-            $zip->close();
-        } else {
-             throw new Exception('プレースホルダーの置き換え処理に失敗しました。');
-        }//
-
-
-
-
-        $this->autoRender = false;
-
-        // ファイルがcake/app/webroot/files以下にあるとき
-        // WWW_ROOT, DS は定数 公式サイト参照
-        //$file_path = WWW_ROOT.'files'.DS.$file_name;
+            $this -> render("print_label_sheet");
 
         
-        //ファイルの種類によってContent-Typeを指定　後述するfirefoxのため。
-        $this->response->type('word');
-        
-        // response->file()でダウンロードもしくは表示するファイルをセット
-        $this->response->file(
-          //ファイルパス
-          $savepath,
-          [
-            //ダウンロードしたときのファイル名。省略すれば元のファイル名。
-            'name'=>"no". $order->order_no . "_" . $filename,
-            //これは必須
-            'download'=>true,
-          ]
-        );
-        
+
         } else{//if copy
              throw new Excetion('雛形ファイルのコピーに失敗しました。');
         }
@@ -695,7 +678,6 @@ class PrintersController extends AppController {
             
             //Create new PHPExcel object　　
             $objReader = PHPExcel_IOFactory::createReader('Excel2007');
-            //$objReader = PHPExcel_IOFactory::createReader('Excel5');
             $objPHPExcel = $objReader -> load($path);
             
             
@@ -849,39 +831,13 @@ class PrintersController extends AppController {
         $sheet->getColumnDimension( 'Q' )->setWidth( (18.44 * $factor +$addedWidth) );
             
         //高さ指定
-         // $sheet->getRowDimension( 5 )->setRowHeight( 13.2 );
-         // $sheet->getRowDimension( 6 )->setRowHeight( 13.2 );
-         // $sheet->getRowDimension( 7 )->setRowHeight( 13.2 );
-         // $sheet->getRowDimension( 9 )->setRowHeight( 13.2 );
-         // $sheet->getRowDimension( 10 )->setRowHeight( 13.2 );
-         // $sheet->getRowDimension( 11 )->setRowHeight( 13.2 );
-         // $sheet->getRowDimension( 12 )->setRowHeight( 13.2 );
-         // $sheet->getRowDimension( 13 )->setRowHeight( 13.2 );
-         // $sheet->getRowDimension( 14 )->setRowHeight( 13.2 );
           $sheet->getRowDimension( 15 )->setRowHeight( 10 );         
-         // $sheet->getRowDimension( 16 )->setRowHeight( 13.2 );
-         // $sheet->getRowDimension( 21 )->setRowHeight( 13.2 );
-         // $sheet->getRowDimension( 22)->setRowHeight( 13.2 );
-         // $sheet->getRowDimension( 23 )->setRowHeight( 13.2 );
-         // $sheet->getRowDimension( 24 )->setRowHeight( 13.2 );
-         // $sheet->getRowDimension( 25 )->setRowHeight( 13.2 );
-         // $sheet->getRowDimension( 26 )->setRowHeight( 13.2 );
-         // $sheet->getRowDimension( 27 )->setRowHeight( 13.2 );
-         // $sheet->getRowDimension( 28 )->setRowHeight( 13.2 );
-         // $sheet->getRowDimension( 30 )->setRowHeight( 13.2 );
           $sheet->getRowDimension( 31 )->setRowHeight( 9 );
 
         // //印刷範囲
          $sheet -> getPageSetup()
          ->setHorizontalCentered(true)
-          -> setPrintArea('A1:Q31');
-        // // $sheet
-        // // ->setBreak('A69', PHPExcel_Worksheet::BREAK_ROW)
-        // // ->getPageSetup()
-        // // //->setFitToPage(true)
-        // // //->setFitToWidth(1)
-        // // //->setFitToHeight(0)
-        // // ->setPrintArea('A1:AO69,A70:AO138');                                             
+          -> setPrintArea('A1:Q31');                                          
  
             // Excelファイルの保存 ------------------------------------------
         
@@ -889,102 +845,87 @@ class PrintersController extends AppController {
             $filename = "no" . $order->order_no ."_".$filename;
             $savepath = $uploadDir . $filename;
         
-        
-            //$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
-        
-            //  $objWriter = new PHPExcel_Writer_Excel5( $objPHPExcel );
             $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
         
             $objWriter -> save($savepath);
         
-            // $this -> set('filename', $filename);
+            $this -> set('filename', $filename);
         
-            // $this -> set('path', $savepath);
+            $this -> set('path', $savepath);
             
             
-                        //    Free up some of the memory
+            //    Free up some of the memory
             $objPHPExcel -> disconnectWorksheets();
-            unset($objPHPExcel);             
+            unset($objPHPExcel);
             
-
-
-        $this->autoRender = false;
-
-        // ファイルがcake/app/webroot/files以下にあるとき
-        // WWW_ROOT, DS は定数 公式サイト参照
-        //$file_path = WWW_ROOT.'files'.DS.$file_name;
+            // $this->autoRender = false;
 
         
         //ファイルの種類によってContent-Typeを指定　後述するfirefoxのため。
-        $this->response->type('excel');
+        // $this->response->type('excel');
         
         // response->file()でダウンロードもしくは表示するファイルをセット
-        $this->response->file(
-          //ファイルパス
-          $savepath,
-          [
-            //ダウンロードしたときのファイル名。省略すれば元のファイル名。
-            'name'=> $filename,
-            //これは必須
-            'download'=>true,
-          ]
-        );
+        // $this->response->file(
+        //   //ファイルパス
+        //   $savepath,
+        //   [
+        //     //ダウンロードしたときのファイル名。省略すれば元のファイル名。
+        //     'name'=> $filename,
+        //     //これは必須
+        //     'download'=>true,
+        //   ]
+        // );
 
-            // $this->layout = false;
+            $this->layout = false;
              
             
-            // $this -> render("print_irradiation_record");
+            $this -> render("print_irradiation_record");
 
-            set_time_limit($default);          
-
-
-
-        
+            set_time_limit($default);  
         
     }
 
     public function printWorkSheet($order_id){
         
         Configure::write("debug",false);
-            $default = ini_get('max_execution_time');
-            set_time_limit(0);
+        $default = ini_get('max_execution_time');
+        set_time_limit(0);
+    
+        //excelファイルの生成
+        $filename = 'work_sheet.xlsx';
+    
+        // 保存ファイルフルパス
+        $uploadDir = realpath(TMP);
+        $uploadDir .= DS . 'excels' . DS;
+        $loadDir = $uploadDir . 'template' . DS;
+        $path = $loadDir . $filename;
         
-            //excelファイルの生成
-            $filename = 'work_sheet.xlsx';
+        //Create new PHPExcel object　　
+        $objReader = PHPExcel_IOFactory::createReader('Excel2007');
+        $objPHPExcel = $objReader -> load($path);
         
-            // 保存ファイルフルパス
-            $uploadDir = realpath(TMP);
-            $uploadDir .= DS . 'excels' . DS;
-            $loadDir = $uploadDir . 'template' . DS;
-            $path = $loadDir . $filename;
-            
-            //Create new PHPExcel object　　
-            $objReader = PHPExcel_IOFactory::createReader('Excel2007');
-            //$objReader = PHPExcel_IOFactory::createReader('Excel5');
-            $objPHPExcel = $objReader -> load($path);
-            
-            
-            /////// $objPHPExcel = new PHPExcel();
         
-            //Set active sheet index to the first sheet, so Excel opens this as the first sheet
-            $objPHPExcel -> setActiveSheetIndex(0);
-            $sheet = $objPHPExcel -> getActiveSheet();
-            // シート名をつける
-            $sheet -> setTitle();
-            // デフォルトのフォント
-            $sheet -> getDefaultStyle() -> getFont() -> setName('ＭＳ Ｐゴシック');
+        /////// $objPHPExcel = new PHPExcel();
+    
+        //Set active sheet index to the first sheet, so Excel opens this as the first sheet
+        $objPHPExcel -> setActiveSheetIndex(0);
+        $sheet = $objPHPExcel -> getActiveSheet();
+        // シート名をつける
+        $sheet -> setTitle();
+        // デフォルトのフォント
+        $sheet -> getDefaultStyle() -> getFont() -> setName('ＭＳ Ｐゴシック');
+    
+        // デフォルトのフォントサイズ
+        $sheet -> getDefaultStyle() -> getFont() -> setSize(9);
+    
+        // デフォルトの列幅指定
+        //  $sheet->getDefaultColumnDimension()->setWidth(12);
+    
+        // デフォルトの行の高さ指定
+        //$sheet -> getDefaultRowDimension() -> setRowHeight(24);
         
-            // デフォルトのフォントサイズ
-            $sheet -> getDefaultStyle() -> getFont() -> setSize(9);
-        
-            // デフォルトの列幅指定
-            //  $sheet->getDefaultColumnDimension()->setWidth(12);
-        
-            // デフォルトの行の高さ指定
-            //$sheet -> getDefaultRowDimension() -> setRowHeight(24);
-            
-            //注文データ取得
-           $table = TableRegistry::get('Orders');            
+        //注文データ取得
+        $table = TableRegistry::get('Orders');            
         $order = $table->get($order_id, [
             'contain' => ['Clients','WorkPlaces', 'WorkContents', 'CapturingRegions', 'FilmSizes', 'Works']
         ]);
@@ -993,140 +934,137 @@ class PrintersController extends AppController {
         $week_str_list = ['日曜日','月曜日','火曜日','水曜日','木曜日','金曜日','土曜日'];
    
             
-            // 開始日
+        // 開始日
+    
+        $startDate = new \DateTime($order->start_date);
         
-            $startDate = new \DateTime($order->start_date);
-            
-            $sheet->setCellValue( "H2",  $startDate->format('Y年m月d日　') . $week_str_list[$startDate->format('w')] );
+        $sheet->setCellValue( "H2",  $startDate->format('Y年m月d日　') . $week_str_list[$startDate->format('w')] );
 
-            // 終了日
+        // 終了日
+    
+        $endDate = new \DateTime($order->end_date);
         
-            $endDate = new \DateTime($order->end_date);
-            
-            $sheet->setCellValue( "S2",  $endDate->format('Y年m月d日　') . $week_str_list[$endDate->format('w')] );
-            
-            //期間
-           $week = [];$given_holidays =[];
-           
-           if($order->has('work_place')){
-               if(!empty($order->work_place->holiday_numbers) or $order->work_place->holiday_numbers === '0'){
-                   $week = explode(",", $order->work_place->holiday_numbers);
-               }
-               
-           $given_holidays = [$order->work_place->holiday1,$order->work_place->holiday2,$order->work_place->holiday3,
-           $order->work_place->holiday4,$order->work_place->holiday5,$order->work_place->holiday6,$order->work_place->holiday7];
-           }
-          //$week = [0,4];
-            $holidayCount = $this->Date->getHolidayCount($order->start_date, $order->end_date, $week,$given_holidays,false);
-            //debug($week);
-            $num_o_days = $endDate->diff($startDate)->format('%a') + 1 - $holidayCount;
-            //debug($num_o_days);die();
-
-            $sheet -> setCellValue("AB2", $num_o_days);           
-
-
-            // 開始時間
+        $sheet->setCellValue( "S2",  $endDate->format('Y年m月d日　') . $week_str_list[$endDate->format('w')] );
         
-            $startTime = new \DateTime($order->start_time);
-            
-            $sheet->setCellValue( "H4",  $startTime->format('H時i分'));
-
-            // 終了時間
+        //期間
+        $week = [];$given_holidays =[];
         
-            $endTime = new \DateTime($order->end_time);
-            
-            $sheet->setCellValue( "O4",$endTime->format('H時i分'));
-
-            
-            //予定人数
-             $sheet->setCellValue( "Z4", $order->patient_num );
-            
-            //派遣先情報
-            if($order->has('work_place')){
-                //派遣先名    
-                $sheet->setCellValue( "H6",  $order->work_place->name );
-                //派遣先住所
-                $sheet->setCellValue( "H10",  $order->work_place->address . $order->work_place->banchi . $order->work_place->tatemono );
-                //派遣先電話番号
-                $sheet->setCellValue( "AF6",  $order->work_place->tel );
+        if($order->has('work_place')){
+            if(!empty($order->work_place->holiday_numbers) or $order->work_place->holiday_numbers === '0'){
+                $week = explode(",", $order->work_place->holiday_numbers);
             }
             
-            //元請け情報
-            if($order->has('client')){
-                //元請け名    
-                $sheet->setCellValue( "H14",  $order->client->name );
-                //元請け郵便番号
-                $sheet->setCellValue( "H18", "〒" . $order->client->postal_code );                
-                //元請け住所
-                $sheet->setCellValue( "M18",  $order->client->address . $order->work_place->banchi . $order->work_place->tatemono );
-                //元請け電話番号
-                $sheet->setCellValue( "AF14",  $order->client->tel );
-                //元請けFAX    
-                $sheet->setCellValue( "AF16",  $order->client->fax ); 
-                //元請け担当者１    
-                $sheet->setCellValue( "AF20",  $order->client->staff );
-                //元請け担当者２
-                $sheet->setCellValue( "AF18",  $order->client->staff2 );
-                                                                             
-            }  
+        $given_holidays = [$order->work_place->holiday1,$order->work_place->holiday2,$order->work_place->holiday3,
+        $order->work_place->holiday4,$order->work_place->holiday5,$order->work_place->holiday6,$order->work_place->holiday7];
+        }
+        //$week = [0,4];
+        $holidayCount = $this->Date->getHolidayCount($order->start_date, $order->end_date, $week,$given_holidays,false);
+        //debug($week);
+        $num_o_days = $endDate->diff($startDate)->format('%a') + 1 - $holidayCount;
+        //debug($num_o_days);die();
+
+        $sheet -> setCellValue("AB2", $num_o_days);           
+
+
+        // 開始時間
+    
+        $startTime = new \DateTime($order->start_time);
+        
+        $sheet->setCellValue( "H4",  $startTime->format('H時i分'));
+
+        // 終了時間
+    
+        $endTime = new \DateTime($order->end_time);
+        
+        $sheet->setCellValue( "O4",$endTime->format('H時i分'));
+
+        
+        //予定人数
+            $sheet->setCellValue( "Z4", $order->patient_num );
+        
+        //派遣先情報
+        if($order->has('work_place')){
+            //派遣先名    
+            $sheet->setCellValue( "H6",  $order->work_place->name );
+            //派遣先住所
+            $sheet->setCellValue( "H10",  $order->work_place->address . $order->work_place->banchi . $order->work_place->tatemono );
+            //派遣先電話番号
+            $sheet->setCellValue( "AF6",  $order->work_place->tel );
+        }
+        
+        //元請け情報
+        if($order->has('client')){
+            //元請け名    
+            $sheet->setCellValue( "H14",  $order->client->name );
+            //元請け郵便番号
+            $sheet->setCellValue( "H18", "〒" . $order->client->postal_code );                
+            //元請け住所
+            $sheet->setCellValue( "M18",  $order->client->address . $order->work_place->banchi . $order->work_place->tatemono );
+            //元請け電話番号
+            $sheet->setCellValue( "AF14",  $order->client->tel );
+            //元請けFAX    
+            $sheet->setCellValue( "AF16",  $order->client->fax ); 
+            //元請け担当者１    
+            $sheet->setCellValue( "AF20",  $order->client->staff );
+            //元請け担当者２
+            $sheet->setCellValue( "AF18",  $order->client->staff2 );
+                                                                            
+        }  
+        
+        //届け先   
+        $sheet->setCellValue( "H22",  $order->recipient );
+        //請求先    
+        $sheet->setCellValue( "R22",  $order->payment );              
             
-            //届け先   
-            $sheet->setCellValue( "H22",  $order->recipient );
-            //請求先    
-            $sheet->setCellValue( "R22",  $order->payment );              
-              
-              
-            //部位  
-            if($order->has('capturing_region')){            
-                $sheet->setCellValue( "AD4",  $order->capturing_region->name );
-            }
-            //サイズ    
-            if($order->has('film_size')){            
-                $sheet->setCellValue( "AG4",  $order->film_size->name );
-            }  
-            //業務    
-            if($order->has('work_content')){            
-                $sheet->setCellValue( "T4",  $order->work_content->name );
-            }
             
-            //作業データ
-            if($order->has('works')){
-                 
-                  $num_o_equipment = 0;
+        //部位  
+        if($order->has('capturing_region')){            
+            $sheet->setCellValue( "AD4",  $order->capturing_region->name );
+        }
+        //サイズ    
+        if($order->has('film_size')){            
+            $sheet->setCellValue( "AG4",  $order->film_size->name );
+        }  
+        //業務    
+        if($order->has('work_content')){            
+            $sheet->setCellValue( "T4",  $order->work_content->name );
+        }
+        
+        //作業データ
+        if($order->has('works')){
                 
-                if(!empty($order->works[0]->equipmentA_id)){
-                    $num_o_equipment++;
-                   $table = TableRegistry::get('Equipments'); 
-                    $equipment = $table->find()
-                    ->contain(['EquipmentTypes'])
-                    ->where(['Equipments.id' => $order->works[0]->equipmentA_id] )
-                    ->first();
+                $num_o_equipment = 0;
+            
+            if(!empty($order->works[0]->equipmentA_id)){
+                $num_o_equipment++;
+                $table = TableRegistry::get('Equipments'); 
+                $equipment = $table->find()
+                ->contain(['EquipmentTypes'])
+                ->where(['Equipments.id' => $order->works[0]->equipmentA_id] )
+                ->first();
 
-                    //A装置名
-                    if($equipment->has('equipment_type')){
-                        $sheet->setCellValue( "AA22",  $equipment->equipment_type->name ); 
-                    }
+                //A装置名
+                if($equipment->has('equipment_type')){
+                    $sheet->setCellValue( "AA22",  $equipment->equipment_type->name ); 
                 }
-                if(!empty($order->works[0]->equipmentB_id)){
-                    $num_o_equipment++;
-                }
-                if(!empty($order->works[0]->equipmentC_id)){
-                    $num_o_equipment++;
-                 }
-                if(!empty($order->works[0]->equipmentD_id)){
-                    $num_o_equipment++;
-                }
-                if(!empty($order->works[0]->equipmentE_id)){
-                    $num_o_equipment++;
-                }   
-                //台数
-                $sheet->setCellValue( "AF2",  $num_o_equipment );
-                                                             
-
             }
+            if(!empty($order->works[0]->equipmentB_id)){
+                $num_o_equipment++;
+            }
+            if(!empty($order->works[0]->equipmentC_id)){
+                $num_o_equipment++;
+                }
+            if(!empty($order->works[0]->equipmentD_id)){
+                $num_o_equipment++;
+            }
+            if(!empty($order->works[0]->equipmentE_id)){
+                $num_o_equipment++;
+            }   
+            //台数
+            $sheet->setCellValue( "AF2",  $num_o_equipment );
+                                                            
 
- 
- 
+        }
  
         //幅を設定
         $addedWidth = 0.7; $factor = 1.3;
@@ -1170,26 +1108,6 @@ class PrintersController extends AppController {
             
         //高さ指定
          // $sheet->getRowDimension( 5 )->setRowHeight( 13.2 );
-         // $sheet->getRowDimension( 6 )->setRowHeight( 13.2 );
-         // $sheet->getRowDimension( 7 )->setRowHeight( 13.2 );
-         // $sheet->getRowDimension( 9 )->setRowHeight( 13.2 );
-         // $sheet->getRowDimension( 10 )->setRowHeight( 13.2 );
-         // $sheet->getRowDimension( 11 )->setRowHeight( 13.2 );
-         // $sheet->getRowDimension( 12 )->setRowHeight( 13.2 );
-         // $sheet->getRowDimension( 13 )->setRowHeight( 13.2 );
-         // $sheet->getRowDimension( 14 )->setRowHeight( 13.2 );
-          //$sheet->getRowDimension( 15 )->setRowHeight( 10 );         
-         // $sheet->getRowDimension( 16 )->setRowHeight( 13.2 );
-         // $sheet->getRowDimension( 21 )->setRowHeight( 13.2 );
-         // $sheet->getRowDimension( 22)->setRowHeight( 13.2 );
-         // $sheet->getRowDimension( 23 )->setRowHeight( 13.2 );
-         // $sheet->getRowDimension( 24 )->setRowHeight( 13.2 );
-         // $sheet->getRowDimension( 25 )->setRowHeight( 13.2 );
-         // $sheet->getRowDimension( 26 )->setRowHeight( 13.2 );
-         // $sheet->getRowDimension( 27 )->setRowHeight( 13.2 );
-         // $sheet->getRowDimension( 28 )->setRowHeight( 13.2 );
-         // $sheet->getRowDimension( 30 )->setRowHeight( 13.2 );
-          //$sheet->getRowDimension( 31 )->setRowHeight( 9 );
 
         // //印刷範囲
           $sheet -> getPageSetup()
@@ -1203,10 +1121,6 @@ class PrintersController extends AppController {
             $filename = "no" . $order->order_no ."_".$filename;
             $savepath = $uploadDir . $filename;
         
-        
-            //$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
-        
-            //  $objWriter = new PHPExcel_Writer_Excel5( $objPHPExcel );
             $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
         
             $objWriter -> save($savepath);
@@ -1247,149 +1161,141 @@ class PrintersController extends AppController {
         
     }
     
-    public function export_order_confirmation($order_id){
+    protected function export_order_confirmation($order_id){
  
- 
-            //excelファイルの生成
-            $filename = 'order_confirmation.xlsx';
+
+        //excelファイルの生成
+        $filename = 'order_confirmation.xlsx';
+    
+        // 保存ファイルフルパス
+        $uploadDir = realpath(TMP);
+        $uploadDir .= DS . 'excels' . DS;
+        $loadDir = $uploadDir . 'template' . DS;
+        $path = $loadDir . $filename;
+    
+        //using Cache to reduce memory usage
+        // $cacheMethod = PHPExcel_CachedObjectStorageFactory::cache_to_phpTemp;
+        // $cacheSettings = array(' memoryCacheSize ' => '8MB');
+        // PHPExcel_Settings::setCacheStorageMethod($cacheMethod, $cacheSettings);
+        //連続印刷で上記ラインにバグ発生！
+        //原因不明の為、コメントアウト
+        //Call to a member function getCellCacheController() on a non-object
+    
+        //Create new PHPExcel object　　
+        $objReader = PHPExcel_IOFactory::createReader('Excel2007');
+        $objPHPExcel = $objReader -> load($path);
         
-            // 保存ファイルフルパス
-            $uploadDir = realpath(TMP);
-            $uploadDir .= DS . 'excels' . DS;
-            $loadDir = $uploadDir . 'template' . DS;
-            $path = $loadDir . $filename;
         
-            //using Cache to reduce memory usage
-           // $cacheMethod = PHPExcel_CachedObjectStorageFactory::cache_to_phpTemp;
-            // $cacheSettings = array(' memoryCacheSize ' => '8MB');
-            // PHPExcel_Settings::setCacheStorageMethod($cacheMethod, $cacheSettings);
-            //連続印刷で上記ラインにバグ発生！
-            //原因不明の為、コメントアウト
-            //Call to a member function getCellCacheController() on a non-object
+        /////// $objPHPExcel = new PHPExcel();
+    
+        //Set active sheet index to the first sheet, so Excel opens this as the first sheet
+        $objPHPExcel -> setActiveSheetIndex(0);
+        $sheet = $objPHPExcel -> getActiveSheet();
+        // シート名をつける
+        $sheet -> setTitle();
+        // デフォルトのフォント
+        $sheet -> getDefaultStyle() -> getFont() -> setName('ＭＳ Ｐゴシック');
+    
+        // デフォルトのフォントサイズ
+        $sheet -> getDefaultStyle() -> getFont() -> setSize(9);
+    
+        // デフォルトの列幅指定
+        //  $sheet->getDefaultColumnDimension()->setWidth(12);
+    
+        // デフォルトの行の高さ指定
+        //$sheet -> getDefaultRowDimension() -> setRowHeight(24);
         
-            //Create new PHPExcel object　　
-            $objReader = PHPExcel_IOFactory::createReader('Excel2007');
-            //$objReader = PHPExcel_IOFactory::createReader('Excel5');
-            $objPHPExcel = $objReader -> load($path);
-            
-            
-            /////// $objPHPExcel = new PHPExcel();
-        
-            //Set active sheet index to the first sheet, so Excel opens this as the first sheet
-            $objPHPExcel -> setActiveSheetIndex(0);
-            $sheet = $objPHPExcel -> getActiveSheet();
-            // シート名をつける
-            $sheet -> setTitle();
-            // デフォルトのフォント
-            $sheet -> getDefaultStyle() -> getFont() -> setName('ＭＳ Ｐゴシック');
-        
-            // デフォルトのフォントサイズ
-            $sheet -> getDefaultStyle() -> getFont() -> setSize(9);
-        
-            // デフォルトの列幅指定
-            //  $sheet->getDefaultColumnDimension()->setWidth(12);
-        
-            // デフォルトの行の高さ指定
-            //$sheet -> getDefaultRowDimension() -> setRowHeight(24);
-            
-            //注文データ取得
-           $table = TableRegistry::get('Orders');            
+        //注文データ取得
+        $table = TableRegistry::get('Orders');    
+
         $order = $table->get($order_id, [
             'contain' => ['Clients','WorkPlaces', 'WorkContents', 'CapturingRegions', 'FilmSizes', 'Works']
         ]);
-            
-            
-            // 作成日
         
-            $createdDate = new \DateTime();
-            
-            $sheet->setCellValue( "W1",  $createdDate->format('Y-m-d') );
-          
-          if($order){ 
+        
+        // 作成日
+    
+        $createdDate = new \DateTime();
+        
+        $sheet->setCellValue( "W1",  $createdDate->format('Y-m-d') );
+        
+        if($order){ 
             // 元請け
             if($order->has('client')){
                 $sheet -> setCellValue("A4", $order->client->name);
             }
-             // 受注No
 
-                $sheet -> setCellValue("AE1", $order->order_no);
-   
+            // 受注No
+            $sheet -> setCellValue("AE1", $order->order_no);
+
             // 合計金額
             $total = $order->guaranty_charge +
             $order->additional_count * $order->additional_unit_price; 
 
-                $sheet -> setCellValue("U25", $total);
+            $sheet -> setCellValue("U25", $total);
 
             // 消費税
-
-                $sheet -> setCellValue("AB14", floor($total * 0.1));
+            $sheet -> setCellValue("AB14", floor($total * 0.1));
 
             
             // 総額
-
-                $sheet -> setCellValue("F13", floor($total * (1.1)));
-                                                  
+            $sheet -> setCellValue("F13", floor($total * (1.1)));
+                                                    
             
-                //撮影装置名をまとめる
-                if($order->has('works')){
-                    $table = TableRegistry::get('Equipments'); 
-                    $equipments = $table->find('list')->toArray();
-                    
-                    $item_name = [];
-                    
-                    if(!empty($order->works->equipmentA_id)){
-                          $item_name[] = $equipments[$order->works->equipmentA_id];  
-                    }
-                    if(!empty($order->works->equipmentB_id)){
-                          $item_name[] = $equipments[$order->works->equipmentB_id];  
-                    }
-                     if(!empty($order->works->equipmentC_id)){
-                          $item_name[] = $equipments[$order->works->equipmentC_id];  
-                    }
-                     if(!empty($order->works->equipmentD_id)){
-                          $item_name[] = $equipments[$order->works->equipmentD_id];  
-                    }
-                     if(!empty($order->works->equipmentE_id)){
-                          $item_name[] = $equipments[$order->works->equipmentE_id];  
-                    }
-                     
-                    
-                    $str_itemname = implode(" ", $item_name);
-                }
-                // 品名
-                $item_name = (($order->has('work_place'))? $order->work_place->name : ""). " " .
-                 (($order->has('work_content'))? $order->work_content->description : ""). " " .
-                 (($order->has('capturing_region'))? $order->capturing_region->name : ""). " " .
-                 $str_itemname. " " .
-                (($order->has('film_size'))? $order->film_size->name : "");
+            //撮影装置名をまとめる
+            if($order->has('works')){
+                $table = TableRegistry::get('Equipments'); 
+                $equipments = $table->find('list')->toArray();
                 
-                $sheet -> setCellValue("A16", $item_name);
+                $item_name = [];
+                
+                if(!empty($order->works->equipmentA_id)){
+                        $item_name[] = $equipments[$order->works->equipmentA_id];  
+                }
+                if(!empty($order->works->equipmentB_id)){
+                        $item_name[] = $equipments[$order->works->equipmentB_id];  
+                }
+                if(!empty($order->works->equipmentC_id)){
+                    $item_name[] = $equipments[$order->works->equipmentC_id];  
+                }
+                if(!empty($order->works->equipmentD_id)){
+                    $item_name[] = $equipments[$order->works->equipmentD_id];  
+                }
+                if(!empty($order->works->equipmentE_id)){
+                    $item_name[] = $equipments[$order->works->equipmentE_id];  
+                }
+                    
+                
+                $str_itemname = implode(" ", $item_name);
+            }
+            // 品名
+            $item_name = (($order->has('work_place'))? $order->work_place->name : ""). " " .
+                (($order->has('work_content'))? $order->work_content->description : ""). " " .
+                (($order->has('capturing_region'))? $order->capturing_region->name : ""). " " .
+                $str_itemname. " " .
+            (($order->has('film_size'))? $order->film_size->name : "");
+            
+            $sheet -> setCellValue("A16", $item_name);
 
-            } 
-            
-            // Excelファイルの保存 ------------------------------------------
+        } 
         
-            //ファイル名作成
-            $filename = "no" . $order->order_no ."_".$filename;
-            $savepath = $uploadDir . $filename;
-        
-        
-            //$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
-        
-            //  $objWriter = new PHPExcel_Writer_Excel5( $objPHPExcel );
-            $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
-        
-            $objWriter -> save($savepath);
-        
-            $this -> set('filename', $filename);
-        
-            $this -> set('path', $savepath);
-        
-            //    Free up some of the memory
-            $objPHPExcel -> disconnectWorksheets();
-            unset($objPHPExcel);    
-            
-            
+        // Excelファイルの保存 ------------------------------------------
+    
+        //ファイル名作成
+        $filename = "no" . $order->order_no ."_".$filename;
+        $savepath = $uploadDir . $filename;
+    
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+    
+        $objWriter -> save($savepath);
+    
+        $this -> set('filename', $filename);
+    
+        $this -> set('path', $savepath);
+    
+        //    Free up some of the memory
+        $objPHPExcel -> disconnectWorksheets();
+        unset($objPHPExcel);             
         
         
     }
@@ -1397,117 +1303,116 @@ class PrintersController extends AppController {
 
     function printAccountReceivable($year,$month,$partner_id = null){
         
-            //データを検索する
-            $conditions = [];
+        //データを検索する
+        $conditions = [];
+        
+        //対象月
+            if(!empty($year) and !empty($month)){
+                
+            $targetDate =new \DateTime($year."/".($month)."/1");
             
-            //対象月
-             if(!empty($year) and !empty($month)){
-                 
-                $targetDate =new \DateTime($year."/".($month)."/1");
-                
-                $conditions[] = ["Orders.end_date BETWEEN '".$targetDate->format("Y-m-1")."' AND '".$targetDate->format("Y-m-t")."'"]; 
-                
-           }else{
-                $targetDate = new \DateTime();
+            $conditions[] = ["Orders.end_date BETWEEN '".$targetDate->format("Y-m-1")."' AND '".$targetDate->format("Y-m-t")."'"]; 
+            
+        }else{
+            $targetDate = new \DateTime();
 
-                $conditions[] = ["Orders.end_date BETWEEN '".$targetDate->format("Y-m-1")."' AND '".$targetDate->format("Y-m-t")."'"]; 
+            $conditions[] = ["Orders.end_date BETWEEN '".$targetDate->format("Y-m-1")."' AND '".$targetDate->format("Y-m-t")."'"]; 
 
-           }           
-            //取引先
-            if(!empty($partner_id)){
-                 $conditions[] = ['payer_id' => $partner_id];       
+        }           
+        //取引先
+        if(!empty($partner_id)){
+                $conditions[] = ['payer_id' => $partner_id];       
 
-              }
+            }
 
-			   $this->Orders = TableRegistry::get('Orders');
-			   
-			   $query = $this->Orders->find_account_receivable_data($conditions); 
-			   $orders = $query->all()->toArray();
-			   $accountReceivables = $this->Orders->sort_account_receivable_data($orders);			      
+            $this->Orders = TableRegistry::get('Orders');
+            
+            $query = $this->Orders->find_account_receivable_data($conditions); 
+            $orders = $query->all()->toArray();
+            $accountReceivables = $this->Orders->sort_account_receivable_data($orders);			      
+
     
+    
+        //Configure::write("debug",false);
+        $default = ini_get('max_execution_time');
+        set_time_limit(0);
+    
+        //excelファイルの生成
+        $filename = 'account_receivable.xlsx';
+    
+        // 保存ファイルフルパス
+        $uploadDir = realpath(TMP);
+        $uploadDir .= DS . 'excels' . DS;
+        $loadDir = $uploadDir . 'template' . DS;
+        $path = $loadDir . $filename;
+        
+        //Create new PHPExcel object　　
+        $objReader = PHPExcel_IOFactory::createReader('Excel2007');
+        //$objReader = PHPExcel_IOFactory::createReader('Excel5');
+        $objPHPExcel = $objReader -> load($path);
         
         
-            //Configure::write("debug",false);
-            $default = ini_get('max_execution_time');
-            set_time_limit(0);
-        
-            //excelファイルの生成
-            $filename = 'account_receivable.xlsx';
-        
-            // 保存ファイルフルパス
-            $uploadDir = realpath(TMP);
-            $uploadDir .= DS . 'excels' . DS;
-            $loadDir = $uploadDir . 'template' . DS;
-            $path = $loadDir . $filename;
-            
-            //Create new PHPExcel object　　
-            $objReader = PHPExcel_IOFactory::createReader('Excel2007');
-            //$objReader = PHPExcel_IOFactory::createReader('Excel5');
-            $objPHPExcel = $objReader -> load($path);
-            
-            
-            /////// $objPHPExcel = new PHPExcel();
-        
-            //Set active sheet index to the first sheet, so Excel opens this as the first sheet
-            $objPHPExcel -> setActiveSheetIndex(0);
-            $sheet = $objPHPExcel -> getActiveSheet();
-            // シート名をつける
-            $sheet -> setTitle();
-            // デフォルトのフォント
-            $sheet -> getDefaultStyle() -> getFont() -> setName('ＭＳ Ｐゴシック');
-        
-            // デフォルトのフォントサイズ
-            $sheet -> getDefaultStyle() -> getFont() -> setSize(9);
-        
-            // デフォルトの列幅指定
-            //  $sheet->getDefaultColumnDimension()->setWidth(12);
-        
-            // デフォルトの行の高さ指定
-            $sheet -> getDefaultRowDimension() -> setRowHeight(13.20);
+        /////// $objPHPExcel = new PHPExcel();
+    
+        //Set active sheet index to the first sheet, so Excel opens this as the first sheet
+        $objPHPExcel -> setActiveSheetIndex(0);
+        $sheet = $objPHPExcel -> getActiveSheet();
+        // シート名をつける
+        $sheet -> setTitle();
+        // デフォルトのフォント
+        $sheet -> getDefaultStyle() -> getFont() -> setName('ＭＳ Ｐゴシック');
+    
+        // デフォルトのフォントサイズ
+        $sheet -> getDefaultStyle() -> getFont() -> setSize(9);
+    
+        // デフォルトの列幅指定
+        //  $sheet->getDefaultColumnDimension()->setWidth(12);
+    
+        // デフォルトの行の高さ指定
+        $sheet -> getDefaultRowDimension() -> setRowHeight(13.20);
 
-            $row_cnt = 5;
+        $row_cnt = 5;
 
-            //行のスタイル設定
-            $style = $sheet->getStyle('A5');
+        //行のスタイル設定
+        $style = $sheet->getStyle('A5');
 
-            foreach ($accountReceivables as $payer_id => $accountReceivable){
-                
-              //請求先名
+        foreach ($accountReceivables as $payer_id => $accountReceivable){
+            
+            //請求先名
             $cell_pos = 'A' . $row_cnt;
             $sheet -> setCellValue($cell_pos, $accountReceivable['payer_name']);
                             
-              //売上高
+            //売上高
             $cell_pos = 'B' . $row_cnt;
-            $sheet -> setCellValue($cell_pos, $accountReceivable['sales']);              
-              //請求額
-             $cell_pos = 'C' . $row_cnt;
-            $sheet -> setCellValue($cell_pos, $accountReceivable['charged']);             
-              //未請求残高
-             $cell_pos = 'D' . $row_cnt;
-            $unbilled = $accountReceivable['sales'] -  $accountReceivable['charged'];                
-             
-            $sheet -> setCellValue($cell_pos, $unbilled);             
-              //回収高
-             $cell_pos = 'E' . $row_cnt;
+            $sheet -> setCellValue($cell_pos, $accountReceivable['sales']); 
+
+            //請求額
+            $cell_pos = 'C' . $row_cnt;
+            $sheet -> setCellValue($cell_pos, $accountReceivable['charged']); 
+
+            //未請求残高
+            $cell_pos = 'D' . $row_cnt;
+            $unbilled = $accountReceivable['sales'] -  $accountReceivable['charged'];            
+            $sheet -> setCellValue($cell_pos, $unbilled);
+
+            //回収高
+            $cell_pos = 'E' . $row_cnt;
             $sheet -> setCellValue($cell_pos, $accountReceivable['received']);             
-                 
                 
+            
 
-                //行のスタイル設定
-                // AからZまでの文字番号をord()で取得してインクリメント
-                for ($char = ord('A'); $char <= ord('Z'); $char++) {
-                  $style = $sheet->getStyle(chr($char) . 5);
-                  
-                  // 生成された文字番号からchr()で文字列に戻す
-                  $sheet->duplicateStyle($style, chr($char) . $row_cnt);
-                }                
-                //$sheet->duplicateStyle($style, 'A' . $row_cnt);
-
+            //行のスタイル設定
+            // AからZまでの文字番号をord()で取得してインクリメント
+            for ($char = ord('A'); $char <= ord('Z'); $char++) {
+                $style = $sheet->getStyle(chr($char) . 5);
                 
-                $row_cnt++;
-                
-                
+                // 生成された文字番号からchr()で文字列に戻す
+                $sheet->duplicateStyle($style, chr($char) . $row_cnt);
             }
+
+            $row_cnt++;
+            
+        }
         
         //日付
         $today = new \DateTime();
@@ -1531,118 +1436,37 @@ class PrintersController extends AppController {
         // //印刷範囲
          $sheet -> getPageSetup()
          //->setHorizontalCentered(true)
-          -> setPrintArea('A1:E' . ($row_cnt - 1));
-        // // $sheet
-        // // ->setBreak('A69', PHPExcel_Worksheet::BREAK_ROW)
-        // // ->getPageSetup()
-        // // //->setFitToPage(true)
-        // // //->setFitToWidth(1)
-        // // //->setFitToHeight(0)
-        // // ->setPrintArea('A1:AO69,A70:AO138');                                             
+          -> setPrintArea('A1:E' . ($row_cnt - 1));                                            
  
-            // Excelファイルの保存 ------------------------------------------
+        // Excelファイルの保存 ------------------------------------------
+    
+        //ファイル名作成
         
-            //ファイル名作成
-            
-            $filename = $today->format("Ymd") ."_".$filename;
-            $savepath = $uploadDir . $filename;
-        
-        
-            //$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
-        
-            //  $objWriter = new PHPExcel_Writer_Excel5( $objPHPExcel );
-            $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
-        
-            $objWriter -> save($savepath);
-        
-            // $this -> set('filename', $filename);
-         
-            // $this -> set('path', $savepath);
-            
-            
-                        //    Free up some of the memory
-            $objPHPExcel -> disconnectWorksheets();
-            unset($objPHPExcel);             
-            
+        $filename = $today->format("Ymd") ."_".$filename;
+        $savepath = $uploadDir . $filename;
+    
 
-
-        $this->autoRender = false;
-
-        // ファイルがcake/app/webroot/files以下にあるとき
-        // WWW_ROOT, DS は定数 公式サイト参照
-        //$file_path = WWW_ROOT.'files'.DS.$file_name;
-
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+    
+        $objWriter -> save($savepath);
+    
+        $this -> set('filename', $filename);
         
-        //ファイルの種類によってContent-Typeを指定　後述するfirefoxのため。
-        $this->response->type('excel');
-        
-        // response->file()でダウンロードもしくは表示するファイルをセット
-        $this->response->file(
-          //ファイルパス
-          $savepath,
-          [
-            //ダウンロードしたときのファイル名。省略すれば元のファイル名。
-            'name'=> $filename,
-            //これは必須
-            'download'=>true,
-          ]
-        );
-
-            // $this->layout = false;
-           
-            // $this -> render("print_irradiation_record");
-
-            set_time_limit($default);          
-
+        $this -> set('path', $savepath);
         
         
+        //    Free up some of the memory
+        $objPHPExcel -> disconnectWorksheets();
+        unset($objPHPExcel);             
+        
+
+        $this->layout = false;
+        
+        $this -> render("print_account_receivable");
+
+        set_time_limit($default);  
         
     }
-
-//phpword 関数見本
-    //phpwordオブジェクト作成
-        // $phpWord = new PhpWord();
-        // //セクション作成　これに、各オブジェクトを追加していく
-        // $section = $phpWord->addSection();
-//         
-// //文字追加
-// $section->addText(
-    // 'ほげほげほげたろー',
-    // array('name' => 'ＭＳ ゴシック', 'size' => 20, 'color' => '66FFFF', 'bold' => true)
-// );
-// //改ページ
-// $section->addPageBreak();
-// //目次生成
-// $section->addTOC();
-// //章のタイトル（目次に反映）
-// $section->addTitle('はじめに',1);
-// $section->addTitle('レポートの目的',2);//小見出し
-// //画像
-// $section->addImage($path,['align' => 'center']);
-// //テーブル
-// $tableStyle = array(
-    // 'borderColor' => '006699',
-    // 'borderSize' => 6,
-    // 'cellMargin' => 50
-// );
-// $table = $section->addTable($tableStyle);
-// $table ->addRow();
-// $table->addCell()->addText('ドメイン名');
-// $table->addCell(2000 [$width], array('bgColor' => 'FFFF66'))->addText('あああ');
-// 
-// //wordファイルの保存
-// $objWriter = IOFactory::createWriter($phpWord, 'Word2007');
-// $objWriter->save($savepath); 
-
-// テンプレートを読み込む  
-// $template = $phpWord->loadTemplate('Templath.docx');
-// 
-// //文字の置き換え
-// $template->setValue('name', '藤村');
-// // 改行を置き換える  
-// $template->setValue('message', "ほげほげ" . "<w:br />"  . "ふがー");
-// //ファイルの保存
-// $template->save('./tmp/sample2.docx');
 
 
 }

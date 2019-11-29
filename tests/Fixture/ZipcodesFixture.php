@@ -24,9 +24,14 @@ class ZipcodesFixture extends TestFixture
     {
         $this->records = [
             [
-                'id' => 1000000,
+                'id' => 1,
                 'zipcode' => '0010000',
                 'address' => '北海道札幌市北区'
+            ],
+            [
+                'id' => 2,
+                'zipcode' => '130021',
+                'address' => '墨田区緑'
             ],
         ];
         parent::init();

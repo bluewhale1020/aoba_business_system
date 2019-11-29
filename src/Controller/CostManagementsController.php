@@ -66,7 +66,7 @@ class CostManagementsController extends AppController
                               
             }            
             
-                debug($conditions);  
+                // debug($conditions);  
 
         }
       
@@ -91,21 +91,12 @@ class CostManagementsController extends AppController
               ->eq('Clients.is_work_place', 1)
               ->isNull('Clients.parent_id');
         })->limit(200);        
-        $workPlaceOptions = $this->Orders->WorkPlaces->find('all')->where(['WorkPlaces.is_work_place' => 1])->limit(200)->toArray();
-        
-        $sortedOptions = [];
-        foreach ($workPlaceOptions as $key => $workPlace) {
-            if (empty($workPlace['parent_id'])) {
-                $sortedOptions[$workPlace['id']][] = $workPlace;
-            } else {
-                $sortedOptions[$workPlace['parent_id']][] = $workPlace;
-            }
-        }
-        
+
+        $sortedOptions = $this->Orders->WorkPlaces->getSortedOptions();
+
        $workContents = $this->Orders->WorkContents->find('list', ['limit' => 200])->toArray();
 
        $this->set(compact('orders', 'clients', 'sortedOptions', 'workContents'));
-        // $this->set(compact('orders','clients','workPlaces','workPlaceOptions','workContents'));
         $this->set('_serialize', ['orders']);
     }
 
@@ -121,7 +112,7 @@ class CostManagementsController extends AppController
        $order = $this->Orders->get($id, [
             'contain' => ['Clients','WorkPlaces', 'WorkContents', 'CapturingRegions', 'FilmSizes','Works']
         ]);
-//Configure::write('debug',false); // DISABLE
+
         $this->set('order', $order);
         $this->set('_serialize', ['order']);
         
@@ -144,33 +135,13 @@ class CostManagementsController extends AppController
             $endDate = new \DateTime($order->end_date);            
             
             $num_o_days = $endDate->diff($startDate)->format('%a') + 1 - $holidayCount;
-//debug($num_o_days);die();
+            //debug($num_o_days);die();
 
             $this->set('holidayCount', $holidayCount);        
             $this->set('num_o_days', $num_o_days); 
     }
 
-    /**
-     * Add method
-     *
-     * @return \Cake\Network\Response|void Redirects on successful add, renders view otherwise.
-     */
-    // public function add()
-    // {
-        // $order = $this->Orders->newEntity();
-        // if ($this->request->is('post')) {
-            // $order = $this->Orders->patchEntity($order, $this->request->data);
-            // if ($this->Orders->save($order)) {
-                // $this->Flash->success(__('The cost management has been saved.'));
-// 
-                // return $this->redirect(['action' => 'index']);
-            // } else {
-                // $this->Flash->error(__('The cost management could not be saved. Please, try again.'));
-            // }
-        // }
-        // $this->set(compact('costManagement'));
-        // $this->set('_serialize', ['costManagement']);
-    // }
+
 
     /**
      * Edit method
@@ -221,30 +192,12 @@ class CostManagementsController extends AppController
             $endDate = new \DateTime($order->end_date);            
             
             $num_o_days = $endDate->diff($startDate)->format('%a') + 1 - $holidayCount;
-//debug($num_o_days);die();
+            //debug($num_o_days);die();
 
             $this->set('holidayCount', $holidayCount);        
             $this->set('num_o_days', $num_o_days); 
 
     }
 
-    /**
-     * Delete method
-     *
-     * @param string|null $id Cost Management id.
-     * @return \Cake\Network\Response|null Redirects to index.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    // public function delete($id = null)
-    // {
-        // $this->request->allowMethod(['post', 'delete']);
-        // $order = $this->Orders->get($id);
-        // if ($this->Orders->delete($order)) {
-            // $this->Flash->success(__('The cost management has been deleted.'));
-        // } else {
-            // $this->Flash->error(__('The cost management could not be deleted. Please, try again.'));
-        // }
-// 
-        // return $this->redirect(['action' => 'index']);
-    // }
+
 }

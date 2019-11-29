@@ -27,7 +27,6 @@ class StaffsController extends AppController
      */
     public function index()
     {
-        // debug("test");die();
         $this->PagingSupport->inheritPostData();
 
         $query = $this->Staffs->find();
@@ -57,8 +56,8 @@ class StaffsController extends AppController
                 ->where($conditions)
                 ->orWhere($conditions2);                
 
-                debug($conditions);
-                debug($conditions2);
+                // debug($conditions);
+                // debug($conditions2);
              
             }
            
@@ -69,7 +68,7 @@ class StaffsController extends AppController
         $staffs = $this->paginate($query);
                
         $occupations = $this->Staffs->Occupation1->find('list', ['limit' => 200])->toArray();
-        $titles = $this->Staffs->Titles->find('list', ['limit' => 200]);
+        $titles = $this->Staffs->Titles->find('list', ['limit' => 200])->toArray();
         $this->set(compact('occupations','titles','staffs'));
         $this->set('_serialize', ['staffs']);            
 
@@ -170,35 +169,26 @@ class StaffsController extends AppController
 
     function ajaxloadaddress(){
         
-
-        
-            // ajaxによる呼び出し？
-            if($this->request->is("ajax")) {
-              $zipcode = $_POST['zipcode'];
-              
-               
-                   $table = TableRegistry::get('Zipcodes');
-              
-              $addressData = $table->find()
-                ->select('address')
-                ->where(['Zipcodes.zipcode like'=>$zipcode."%"])
-                ->first();
-             
- 
+        // ajaxによる呼び出し？
+        if($this->request->is("ajax")) {
+            $zipcode = $this->request->data['zipcode'];              
+            
+            $table = TableRegistry::get('Zipcodes');
+            
+            $address = $table->getAddress($zipcode);
+            
+            if(!$address){
+                $this->response->type('json');
+                $this->response->statusCode(400);
+                echo json_encode(['message' => __('該当する郵便番号は登録されていません！')]);
+                return $this->response;                                             
+            }else{                    
+                return $this->response->withStringBody(json_encode($address));                 
             }
+                            
 
-            //debug($addressData);die();
-  
-          $address = $addressData->address;      
-                       
-                
-//      $result = array('address'=>$address);
-
-
-        $this->set('result',$address);      
-        
-        
-        
+        }
+       
     }
 
 }

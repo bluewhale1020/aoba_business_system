@@ -44,16 +44,15 @@ class DataImportsController extends AppController
                 if($colNames){//jqgridのヘッダー名配列
                     $this->set('colNames', $colNames);
                 }            
-    
+
                 $this->set('upload_file', $filename);
                 $this->Flash->success(__('データファイルを読み込みました。'));             
             } catch (RuntimeException $e){
+
                 $this->Flash->error(__('ファイルのアップロードができませんでした.'));
                 $this->Flash->error(__($e->getMessage()));
             }
-
-        }//->post
-
+        }
 
     }
 
@@ -68,7 +67,8 @@ class DataImportsController extends AppController
 
             $response->userdata = array('category'=>$category);
 
-            $this->set('result',$response);	            
+            return $this->response->withStringBody(json_encode($response));                 
+            // $this->set('result',$response);	            
        
         }
 
@@ -86,7 +86,7 @@ class DataImportsController extends AppController
     public function download()
     {
         if ($this->request->is(['post'])) {
-            $filename = 'import_' . $_POST['filename'] . '.xlsx';
+            $filename = 'import_' . $this->request->data['filename'] . '.xlsx';
             $dir = realpath(WWW_ROOT . "files");          
             // ダウンロードファイルフルパス
             $file_path = $dir . DS . $filename; 
@@ -119,13 +119,13 @@ class DataImportsController extends AppController
             // パラメータ
             $values = array();
 
-            if (isset($_POST['dat']))
+            if (isset($this->request->data['dat']))
             {
-                $vals = $_POST['dat'];
+                $vals = $this->request->data['dat'];
             }
-            if (isset($_POST['num']))
+            if (isset($this->request->data['num']))
             {
-                $recordNum = $_POST['num'];
+                $recordNum = $this->request->data['num'];
             }
 
             switch($category){
@@ -145,94 +145,12 @@ class DataImportsController extends AppController
             }else{      
                 $result['overall'] =array('result'=>0,'message'=>$overall_message);
             }
+
+            return $this->response->withStringBody(json_encode($result));                 
             
-            $this->set('result', $result);
+            // $this->set('result', $result);
 
         }        
     }
 
-
-
-
-
-////////////////////////////////////////////////以下　テンプレート
-    /**
-     * View method
-     *
-     * @param string|null $id Data Import id.
-     * @return \Cake\Http\Response|null
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function view($id = null)
-    {
-        $dataImport = $this->DataImports->get($id, [
-            'contain' => []
-        ]);
-
-        $this->set('dataImport', $dataImport);
-    }
-
-    /**
-     * Add method
-     *
-     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
-     */
-    public function add()
-    {
-        $dataImport = $this->DataImports->newEntity();
-        if ($this->request->is('post')) {
-            $dataImport = $this->DataImports->patchEntity($dataImport, $this->request->getData());
-            if ($this->DataImports->save($dataImport)) {
-                $this->Flash->success(__('The data import has been saved.'));
-
-                return $this->redirect(['action' => 'index']);
-            }
-            $this->Flash->error(__('The data import could not be saved. Please, try again.'));
-        }
-        $this->set(compact('dataImport'));
-    }
-
-    /**
-     * Edit method
-     *
-     * @param string|null $id Data Import id.
-     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function edit($id = null)
-    {
-        $dataImport = $this->DataImports->get($id, [
-            'contain' => []
-        ]);
-        if ($this->request->is(['patch', 'post', 'put'])) {
-            $dataImport = $this->DataImports->patchEntity($dataImport, $this->request->getData());
-            if ($this->DataImports->save($dataImport)) {
-                $this->Flash->success(__('The data import has been saved.'));
-
-                return $this->redirect(['action' => 'index']);
-            }
-            $this->Flash->error(__('The data import could not be saved. Please, try again.'));
-        }
-        $this->set(compact('dataImport'));
-    }
-
-    /**
-     * Delete method
-     *
-     * @param string|null $id Data Import id.
-     * @return \Cake\Http\Response|null Redirects to index.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function delete($id = null)
-    {
-        $this->request->allowMethod(['post', 'delete']);
-        $dataImport = $this->DataImports->get($id);
-        if ($this->DataImports->delete($dataImport)) {
-            $this->Flash->success(__('The data import has been deleted.'));
-        } else {
-            $this->Flash->error(__('The data import could not be deleted. Please, try again.'));
-        }
-
-        return $this->redirect(['action' => 'index']);
-    }
 }

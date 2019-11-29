@@ -16,16 +16,16 @@ class ContractRatesController extends AppController
      *
      * @return \Cake\Network\Response|null
      */
-    public function index()
-    {
-        $this->paginate = [
-            'contain' => ['BusinessPartners']
-        ];
-        $contractRates = $this->paginate($this->ContractRates);
+    // public function index()
+    // {
+    //     $this->paginate = [
+    //         'contain' => ['BusinessPartners']
+    //     ];
+    //     $contractRates = $this->paginate($this->ContractRates);
 
-        $this->set(compact('contractRates'));
-        $this->set('_serialize', ['contractRates']);
-    }
+    //     $this->set(compact('contractRates'));
+    //     $this->set('_serialize', ['contractRates']);
+    // }
 
     /**
      * View method
@@ -34,15 +34,15 @@ class ContractRatesController extends AppController
      * @return \Cake\Network\Response|null
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function view($id = null)
-    {
-        $contractRate = $this->ContractRates->get($id, [
-            'contain' => ['BusinessPartners']
-        ]);
+    // public function view($id = null)
+    // {
+    //     $contractRate = $this->ContractRates->get($id, [
+    //         'contain' => ['BusinessPartners']
+    //     ]);
 
-        $this->set('contractRate', $contractRate);
-        $this->set('_serialize', ['contractRate']);
-    }
+    //     $this->set('contractRate', $contractRate);
+    //     $this->set('_serialize', ['contractRate']);
+    // }
 
 
     /**
@@ -84,20 +84,19 @@ class ContractRatesController extends AppController
             if ($this->ContractRates->save($contractRate)) {
                 $this->Flash->success(__('業務契約の料金を設定しました。'));
 
-              if(empty($business_partner_id)){
-                    return $this->redirect(['action' => 'view',$contractRate->id]);
-                }else{
-                    return $this->redirect(['controller'=>'BusinessPartners','action' => 'view',$business_partner_id]);
-                }
+            //   if(empty($business_partner_id)){
+            //         return $this->redirect(['action' => 'view',$contractRate->id]);
+            //     }else{
+                return $this->redirect(['controller'=>'BusinessPartners','action' => 'view',$business_partner_id]);
+                // }
 
             } else {
                 $this->Flash->error(__('業務契約料金の設定に失敗しました。再度やり直してください。'));
             }
         }
 
-        if(!empty($business_partner_id)){
-            $contractRate->business_partner_id = $business_partner_id;
-        }
+        $contractRate->business_partner_id = $business_partner_id;
+
 
         $businessPartners = $this->ContractRates->BusinessPartners->find('list', ['limit' => 200])->toArray();
         $this->set(compact('contractRate', 'businessPartners'));
@@ -121,11 +120,11 @@ class ContractRatesController extends AppController
             if ($this->ContractRates->save($contractRate)) {
                 $this->Flash->success(__('業務契約の料金を更新しました。'));
                 
-              if(empty($business_partner_id)){
-                    return $this->redirect(['action' => 'view',$id]);
-                }else{
-                    return $this->redirect(['controller'=>'BusinessPartners','action' => 'view',$business_partner_id]);
-                }
+            //   if(empty($business_partner_id)){
+            //         return $this->redirect(['action' => 'view',$id]);
+            //     }else{
+                return $this->redirect(['controller'=>'BusinessPartners','action' => 'view',$business_partner_id]);
+                // }
             } else {
                 $this->Flash->error(__('業務契約料金の更新に失敗しました。再度やり直してください。'));
             }
@@ -133,40 +132,6 @@ class ContractRatesController extends AppController
         $businessPartners = $this->ContractRates->BusinessPartners->find('list', ['limit' => 200])->toArray();
         $this->set(compact('contractRate', 'businessPartners'));
         $this->set('_serialize', ['contractRate']);
-    }
-
-    /**
-     * clear method
-     *
-     * @param string|null $id Contract Rate id.
-     * @return \Cake\Network\Response|null Redirects to BusinessPartnersview.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function clear($business_partner_id = null)//depreciated
-    {
-          // POSTメソッドのみを許可
-        $this->request->allowMethod(['post']);
-        
-        $contractRate = $this->ContractRates->find()
-        //->contain(['Address'])
-        ->where(['ContractRates.business_partner_id' => $business_partner_id])
-        ->first();
-        $tempArray = $contractRate->toArray();
-        debug($contractRate);
-        foreach ($tempArray as $key => $value) {
-            if(!in_array($key,array('id','business_partner_id') )){
-                $tempArray[$key] = null;
-            }
-        }    
-            $contractRate = $this->ContractRates->patchEntity($contractRate,$tempArray);
-            if ($this->ContractRates->save($contractRate)) {
-                $this->Flash->success(__('業務契約の料金をクリアしました。'));
-                
-            } else {
-                $this->Flash->error(__('業務契約料金のクリアに失敗しました。再度やり直してください。'));
-            }
-
-        return $this->redirect(['controller'=>'BusinessPartners','action' => 'view',$business_partner_id]);
     }
 
 
@@ -184,7 +149,7 @@ class ContractRatesController extends AppController
         //->contain(['Address'])
         ->where(['ContractRates.business_partner_id' => $business_partner_id])
         ->first();
-        if ($this->ContractRates->delete($contractRate)) {
+        if ($contractRate and $this->ContractRates->delete($contractRate)) {
             $this->Flash->success(__('業務契約の料金設定をクリアしました。'));
         } else {
             $this->Flash->error(__('業務契約料金の設定クリアに失敗しました。再度やり直してください。'));
@@ -194,13 +159,11 @@ class ContractRatesController extends AppController
     }
 
 
-    function ajaxloadcontractrates(){
-        
+    function ajaxloadcontractrates(){     
 
-        
         // ajaxによる呼び出し？
         if($this->request->is("ajax")) {
-          $business_partner_id = $_POST['client_id'];
+          $business_partner_id = $this->request->data['client_id'];
 
           
           $contractRate = $this->ContractRates
@@ -208,14 +171,16 @@ class ContractRatesController extends AppController
             ->where(['business_partner_id'=>$business_partner_id])
             ->first();
          
-
-        }
-
-  
-
-    $this->set('result',$contractRate);      
-    
-    
+            if(!$contractRate){
+                $this->response->type('json');
+                $this->response->statusCode(400);
+                echo json_encode(['message' => __('指定の取引先の契約料金は登録されていません！')]);
+                return $this->response;                                             
+            }else{                    
+                return $this->response->withStringBody(json_encode($contractRate));                 
+            }
+            // $this->set('result',$contractRate);      
+        }   
     
 }    
 

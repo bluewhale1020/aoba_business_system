@@ -185,7 +185,7 @@ class ImportComponent extends Component
 
     // データをテーブルに保存できる書式に整形
     protected function sort_import($rowdata){
-        debug($rowdata);
+        // debug($rowdata);
         $importdata = [];
         
         foreach($rowdata as $colname => $value){
@@ -209,7 +209,7 @@ class ImportComponent extends Component
                     // $importdata['Others'] = $value; 
             }             
         }
-        debug($importdata);//die();
+        // debug($importdata);//die();
         
         // $importdataを返す
         return $importdata; 
@@ -243,6 +243,9 @@ class ImportComponent extends Component
 
     //性別データの変換
     protected function _conv_sex($value){
+        if($value == 1 or $value == 2){
+            return $value;
+        }
 
         if($value == '男'){
             return 1;
@@ -250,6 +253,7 @@ class ImportComponent extends Component
             return 2;
 
         }
+
 
     }
 

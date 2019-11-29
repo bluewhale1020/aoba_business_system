@@ -76,16 +76,9 @@ class OrdersController extends AppController
               ->eq('Clients.is_work_place', 1)
               ->isNull('Clients.parent_id');
         })->limit(200);
-        $workPlaceOptions = $this->Orders->WorkPlaces->find('all')->where(['WorkPlaces.is_work_place' => 1])->limit(200)->toArray();
+
+        $sortedOptions = $this->Orders->WorkPlaces->getSortedOptions();
         
-        $sortedOptions = [];
-        foreach ($workPlaceOptions as $key => $workPlace) {
-            if (empty($workPlace['parent_id'])) {
-                $sortedOptions[$workPlace['id']][] = $workPlace;
-            } else {
-                $sortedOptions[$workPlace['parent_id']][] = $workPlace;
-            }
-        }
         $workContents = $this->Orders->WorkContents->find('list', ['limit' => 200])->toArray();
 
         $this->set(compact('orders', 'clients', 'sortedOptions', 'workContents'));
@@ -144,7 +137,6 @@ class OrdersController extends AppController
         $order = $this->Orders->newEntity();
         if ($this->request->is('post')) {
             $this->request->data = $this->Orders->modify_requstdata($this->request->data);
-
             $order = $this->Orders->patchEntity($order, $this->request->data);
             if ($this->Orders->save($order)) {
                 
@@ -171,15 +163,7 @@ class OrdersController extends AppController
         }
         
         //受注No
-        $lastNo = $this->Orders->find()
-            ->select(['order_no' => 'MAX(Orders.order_no)'])
-            ->first();
-        if ($lastNo and is_numeric($lastNo->order_no)) {
-            $order->order_no = $lastNo->order_no + 1;
-        } else {
-            $order->order_no = 1;
-        }
-        
+        $order->order_no = $this->Orders->getLatestOrderNo();
         
         $clients = $this->Orders->Clients->find('list')->where(['Clients.is_client' => 1])
         ->orWhere(function ($exp) {
@@ -187,17 +171,8 @@ class OrdersController extends AppController
               ->eq('Clients.is_work_place', 1)
               ->isNull('Clients.parent_id');
         })->limit(200);
-        $workPlaceOptions = $this->Orders->WorkPlaces->find('all')->where(['WorkPlaces.is_work_place' => 1])->limit(200)->toArray();
-        
-        $sortedOptions = [];
-        foreach ($workPlaceOptions as $key => $workPlace) {
-            if (empty($workPlace['parent_id'])) {
-                $sortedOptions[$workPlace['id']][] = $workPlace;
-            } else {
-                $sortedOptions[$workPlace['parent_id']][] = $workPlace;
-            }
-        }
-        
+
+        $sortedOptions = $this->Orders->WorkPlaces->getSortedOptions();        
 
         $workContents = $this->Orders->WorkContents->find('list', ['limit' => 200]);
         $capturingRegions = $this->Orders->CapturingRegions->find('list', ['limit' => 200]);
@@ -313,16 +288,16 @@ class OrdersController extends AppController
     {
         // ajaxによる呼び出し？
         if ($this->request->is("ajax")) {
-            $holiday_numbers = $_POST['holiday_numbers'];
-            $holiday1 = $_POST['holiday1'];
-            $holiday2 = $_POST['holiday2'];
-            $holiday3 = $_POST['holiday3'];
-            $order_id = $_POST['order_id'];
-            $partner_id = $_POST['partner_id'];
+            $holiday_numbers = $this->request->data['holiday_numbers'];
+            $holiday1 = $this->request->data['holiday1'];
+            $holiday2 = $this->request->data['holiday2'];
+            $holiday3 = $this->request->data['holiday3'];
+            $order_id = $this->request->data['order_id'];
+            $partner_id = $this->request->data['partner_id'];
             //取引先の休日データを保存する
             $this->BusinessPartners = TableRegistry::get('BusinessPartners');
 
-                                         
+                                        
             $newData = ['holiday_numbers' => $holiday_numbers,'holiday1'=>$holiday1,
             'holiday2'=>$holiday2,'holiday3'=>$holiday3];
             $businessPartners = $this->BusinessPartners->get($partner_id, [
@@ -331,12 +306,12 @@ class OrdersController extends AppController
 
             $businessPartners = $this->BusinessPartners->patchEntity($businessPartners, $newData);
             if ($this->BusinessPartners->save($businessPartners)) {
-                
-                //実働日数の取得
-                
+                    
+                    //実働日数の取得
+                    
                 $order = $this->Orders->get($order_id, [
-            'contain' => ['WorkPlaces']
-        ]);
+                'contain' => ['WorkPlaces']
+                ]);
        
                 //期間
                 $week = [];
@@ -348,7 +323,7 @@ class OrdersController extends AppController
                     }
                
                     $given_holidays = [$order->work_place->holiday1,$order->work_place->holiday2,$order->work_place->holiday3,
-           $order->work_place->holiday4,$order->work_place->holiday5,$order->work_place->holiday6,$order->work_place->holiday7];
+                                        $order->work_place->holiday4,$order->work_place->holiday5,$order->work_place->holiday6,$order->work_place->holiday7];
                 }
                 //$week = [0,4];
                 $holidayCount = $this->Date->getHolidayCount($order->start_date, $order->end_date, $week, $given_holidays, false);
@@ -360,22 +335,21 @@ class OrdersController extends AppController
                 
                 $result = ['holidayCount' => $holidayCount,'num_o_days' => $num_o_days];
                 
-                $this->set('result', $result);
+                // $this->set('result', $result);
             } else {
-                $this->set('result', false);
+                $result = false;
+                // $this->set('result', false);
             }
+            return $this->response->withStringBody(json_encode($result));
         }
     }
     
     public function ajaxsavetempregistry()
     {
-        
-
-        
             // ajaxによる呼び出し？
         if ($this->request->is("ajax")) {
-            $order_id = $_POST['order_id'];
-            $value = $_POST['value'];
+            $order_id = $this->request->data['order_id'];
+            $value = $this->request->data['value'];
             $newData = $this->Orders->newEntity();
             $order = $this->Orders->get($order_id, [
                 'contain' => []
@@ -389,7 +363,7 @@ class OrdersController extends AppController
             }
         }
 
-
-        $this->set('result', $result);
+        return $this->response->withStringBody(json_encode($result));
+        // $this->set('result', $result);
     }
 }

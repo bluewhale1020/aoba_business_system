@@ -56,4 +56,27 @@ class ZipcodesTable extends Table
 
         return $validator;
     }
+
+    /**
+     * 郵便番号を受け取り、住所を返す
+     * 
+     * @param string $zipcode 
+     * 
+     * @return string $address
+     */
+    public function getAddress($zipcode)
+    {
+        $addressData = $this->find()
+        ->select('address')
+        ->where(['Zipcodes.zipcode LIKE'=>"$zipcode%"])
+        ->first();
+        
+        if($addressData){
+            return $addressData->address;
+        }else{
+            return false;
+        }
+    }
+
+
 }

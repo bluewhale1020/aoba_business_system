@@ -206,7 +206,11 @@ $.ajax({
     
     },
     error:function(XHR, status, errorThrown){
-              alert(status);
+            if(XHR.responseJSON.message != null){
+                // alert(XHR.responseJSON.message);
+            }else{
+                alert(status)
+            }
         }
     
     });

@@ -78,6 +78,39 @@ class BusinessPartnersTableTest extends TestCase
     }    
 
     /**
+     * Test sortOptions method
+     *
+     * @return void
+     */
+    public function testSortOptions()
+    {
+        $reflection = new \ReflectionClass($this->BusinessPartners);
+        $method = $reflection->getMethod('sortOptions');
+        $method->setAccessible(true);
+
+        $data =[
+            ['id'=>1,'parent_id'=>10 ,'data'=>'aefawf'],
+            ['id'=>2,'parent_id'=>10 ,'data'=>'aefawf'],
+            ['id'=>3,'parent_id'=>null ,'data'=>'aefawf'],
+            ['id'=>4,'parent_id'=>20 ,'data'=>'aefawf'],
+
+        ];
+
+        $result = $method->invoke($this->BusinessPartners,$data);
+
+        $expected = [
+            10=>[
+                ['id'=>1,'parent_id'=>10 ,'data'=>'aefawf'],
+                ['id'=>2,'parent_id'=>10 ,'data'=>'aefawf'],
+            ],
+            3=>[['id'=>3,'parent_id'=>null ,'data'=>'aefawf']],
+            20=>[['id'=>4,'parent_id'=>20 ,'data'=>'aefawf']]
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
+
+    /**
      * Test import_check_holidays method
      *
      * @return void

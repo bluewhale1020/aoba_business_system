@@ -325,6 +325,24 @@ class OrdersTableTest extends TestCase
 
     }
 
+    public function testGetLatestOrderNo(){
+
+        $result = $this->Orders->getLatestOrderNo();
+        $expected = "";
+        $this->assertEquals($expected, $result);   
+        
+        $order = $this->Orders->newEntity([
+            'order_no'=>'12',
+            'client_id'=>1,
+            'work_place_id'=>3,
+        ]);
+        $this->Orders->save($order);
+
+        $result = $this->Orders->getLatestOrderNo();
+        $expected = 13;
+        $this->assertEquals($expected, $result);        
+    }
+
     /**
      * tearDown method
      *

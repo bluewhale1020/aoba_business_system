@@ -167,4 +167,35 @@ class WorksTableTest extends TestCase
 
 
     }
+
+    /**
+     * Test setRentalDateRange method
+     *
+     * @return void
+     */
+    public function testSetRentalDateRange()
+    {
+
+        $data =[
+            "A_start_date" => "2019-10-7",
+            "A_end_date" => "2019-10-9",
+            "B_start_date" => "2019-10-9",
+            "B_end_date" => "2019-10-11",
+            "C_start_date" => "2019-10-11",
+            "C_end_date" => "2019-10-14",
+        ];
+        $work = $this->Works->newEntity($data);
+
+        $result = $this->Works->setRentalDateRange($work);
+        debug($result->A_date_range);
+        $expected = [
+            "A_date_range"=> "2019-10-7 - 2019-10-9",
+            "B_date_range"=> "2019-10-9 - 2019-10-11",
+            "C_date_range"=> "2019-10-11 - 2019-10-14",
+        ];
+        foreach($expected as $key => $val){
+            $this->assertEquals($val, $result->{$key});                    
+        }
+    }    
+
 }

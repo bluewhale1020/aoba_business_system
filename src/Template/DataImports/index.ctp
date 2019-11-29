@@ -68,6 +68,9 @@ $(document).ready(function(){
 
     jQuery("#list").jqGrid({
         url: '<?php echo $url . $upload_file; ?>' ,
+        loadBeforeSend: function(jqXHR) {
+            jqXHR.setRequestHeader('X-CSRF-Token', <?= json_encode($this->request->getParam('_csrfToken')); ?>);
+        },      
         datatype: 'json',
         mtype: 'POST',
         colNames:columnNameData,		  

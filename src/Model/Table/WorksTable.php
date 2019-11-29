@@ -281,5 +281,33 @@ class WorksTable extends Table
         return $d && $d->format($format) == $date;
     }
 
+    /**
+     * 使用する装置の貸出開始日が登録されていれば、開始日・終了日から
+     * 期間を作成して、各date_rangeフィールドに設定する
+     * 
+     * @param entity $work
+     * 
+     * @return entity $work 各date_rangeを設定後
+     */
+    public function setRentalDateRange($work){
+        if(!empty($work->A_start_date)){
+            $work->A_date_range = $work->A_start_date . " - " .$work->A_end_date;        
+        }
+        if(!empty($work->B_start_date)){
+            $work->B_date_range = $work->B_start_date . " - " .$work->B_end_date;        
+        }
+        if(!empty($work->C_start_date)){
+            $work->C_date_range = $work->C_start_date . " - " .$work->C_end_date;        
+        }
+        if(!empty($work->D_start_date)){
+            $work->D_date_range = $work->D_start_date . " - " .$work->D_end_date;        
+        }
+        if(!empty($work->E_start_date)){
+            $work->E_date_range = $work->E_start_date . " - " .$work->E_end_date;        
+        }
+
+        return $work;
+    }
+
 
 }

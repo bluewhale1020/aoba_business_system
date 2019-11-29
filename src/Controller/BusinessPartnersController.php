@@ -53,12 +53,12 @@ class BusinessPartnersController extends AppController
                         
         }            
         
-            debug($conditions);    
+            // debug($conditions);    
             
         }
         
         $this->paginate = [
-            'limit' => 5,
+            'limit' => 10,
             'contain'=>['ParentBusinessPartners', 'ChildBusinessPartners'],
             // 'order' => [
             //     'Users.created' => 'desc'
@@ -96,17 +96,6 @@ class BusinessPartnersController extends AppController
         $this->set('_serialize', ['businessPartner']);
     }
     
-    private function merge_sub_partners($parent,$child){//depreciated
-        if(empty($parent) and empty($child)){
-            return false;
-        }
-        if(empty($parent)){ return $child;}
-        if(empty($child)){ return $parent;}
-        
-        return array_merge($parent,$child);
-        
-        
-    }
 
     /**
      * Add method
@@ -197,32 +186,25 @@ class BusinessPartnersController extends AppController
     
     function ajaxloadaddress(){
         
+        // ajaxによる呼び出し？
+        if($this->request->is("ajax")) {
+            $zipcode = $this->request->data['zipcode'];              
+            
+            $table = TableRegistry::get('Zipcodes');
+         
+            $address = $table->getAddress($zipcode);
 
-        
-            // ajaxによる呼び出し？
-            if($this->request->is("ajax")) {
-              $zipcode = $_POST['zipcode'];
-              
-               
-                   $table = TableRegistry::get('Zipcodes');
-              
-              $addressData = $table->find()
-                ->select('address')
-                ->where(['Zipcodes.zipcode like'=>$zipcode."%"])
-                ->first();
-             
- 
+            if(!$address){
+                $this->response->type('json');
+                $this->response->statusCode(400);
+                echo json_encode(['message' => __('該当する郵便番号は登録されていません！')]);
+                return $this->response;                                             
+            }else{                    
+                return $this->response->withStringBody(json_encode($address));                 
             }
-
-            //debug($addressData);die();
-  
-          $address = $addressData->address;      
-                       
-                
-//      $result = array('address'=>$address);
-
-
-        $this->set('result',$address);      
+                               
+   
+        }      
         
         
         

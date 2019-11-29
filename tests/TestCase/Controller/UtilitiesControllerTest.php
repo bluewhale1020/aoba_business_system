@@ -20,56 +20,72 @@ class UtilitiesControllerTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'app.Utilities'
+        'app.business_partners',         
+        'app.orders3',    
+        'app.bills3',    
+        'app.works3',
     ];
 
+    protected function setUserSession()
+    {
+        $this->session(['Auth' => [
+            'User' => [
+                'id' => 4,
+                'username' => 'admin',
+                'role' => 'admin',
+            ]
+        ]]);
+    }    
     /**
-     * Test index method
+     * setUp method
      *
      * @return void
      */
-    public function testIndex()
+    public function setUp()
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        parent::setUp();
+        $this->setUserSession();
+    }
+    /**
+     * tearDown method
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+
+        parent::tearDown();
     }
 
     /**
-     * Test view method
+     * Test ajaxloadnotifications method
      *
      * @return void
      */
-    public function testView()
+    public function testAjaxloadnotifications()
     {
-        $this->markTestIncomplete('Not implemented yet.');
-    }
+        $token = 'my-csrf-token';
+        $this->cookie('csrfToken', $token);
 
-    /**
-     * Test add method
-     *
-     * @return void
-     */
-    public function testAdd()
-    {
-        $this->markTestIncomplete('Not implemented yet.');
-    }
+        $this->configRequest([
+            'headers' => [
+                'X-Requested-With' => 'XMLHttpRequest',
+                'X-CSRF-Token' => $token,
+            ],
+        ]);
 
-    /**
-     * Test edit method
-     *
-     * @return void
-     */
-    public function testEdit()
-    {
-        $this->markTestIncomplete('Not implemented yet.');
-    }
+        $this->get('/Utilities/ajaxloadnotifications');
+        $this->assertResponseCode(200);
+        
+        $notifications = json_decode($this->_response->getBody(), true);
+        // debug($notifications);
+        $this->assertArrayHasKey('totalcount', $notifications);
+        $this->assertArrayHasKey('unconfirmed_orders', $notifications);
+        $this->assertArrayHasKey('unfinished_works', $notifications);
+        $this->assertArrayHasKey('unbilled_orders', $notifications);
+        $this->assertArrayHasKey('unpaid_bills', $notifications);          
 
-    /**
-     * Test delete method
-     *
-     * @return void
-     */
-    public function testDelete()
-    {
-        $this->markTestIncomplete('Not implemented yet.');
+
+
     }
 }
