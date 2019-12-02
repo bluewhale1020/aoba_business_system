@@ -135,7 +135,7 @@ class BillsController extends AppController
         // $this->paginate = [
             // 'contain' => ['BusinessPartners']
         // ];
-//         
+        
         // $bills = $this->paginate($this->Bills);
         
         //顧客情報
@@ -218,9 +218,6 @@ class BillsController extends AppController
      */
     public function add($partner_id = null,$check_str = null,$year = null, $month = null)
     {
-        
-        
-        
         $bill = $this->Bills->newEntity();
         if ($this->request->is('post')) {
             //debug($this->request->data);die();
@@ -275,196 +272,165 @@ class BillsController extends AppController
 
 
 
-public function ajaxcreatebilldetails($check_str){
+    public function ajaxcreatebilldetails($check_str){
 
 
-                    // デバッグ情報出力を抑制
-            Configure::write('debug', true);
-            // ajaxによる呼び出し？
-            if($this->request->is("ajax")) {
-                
+                // デバッグ情報出力を抑制
+        Configure::write('debug', true);
+        // ajaxによる呼び出し？
+        if($this->request->is("ajax")) {
+                    
 
-        $order_ids = explode(",", $check_str);             
-        
+            $order_ids = explode(",", $check_str);             
+            
             //請求明細情報取得
             $orders = $this->Orders->find()
                 ->contain(['Clients','WorkPlaces','WorkContents'])
                 ->where(["Orders.id IN" => $order_ids])
-                ->all();            
-            
-            
-            
-                
-            //debug($modelName.$check_str.$payer_type.$payer_id);
-    
-        
-                $page = $_POST['page']; // get the requested page 
-                $limit = $_POST['rows']; // get how many rows we want to have into the grid 
-                $sidx = $_POST['sidx']; // get index row - i.e. user click to sort 
-                $sord = $_POST['sord']; // get the direction        
-
-                if(!$sidx) $sidx =1; 
-
-
-
-      $response = new \stdClass;
-      
- $i=0; 
- $subtotal = 0;
- $total = 0;
- //pr($billDetailInfo);die;
-foreach ($orders as $order){ 
-            
-                   
-//['id','bill_id','受注No','保証料金','保証人数','追加人数','追加料金単価','その他料金']
-    $subtotal = $order->guaranty_charge + 
-    $order->additional_count * $order->additional_unit_price + $order->other_charge;    
-    $total += $subtotal;
-            
-        
-        // jqgrid用repsonse配列にセット（疾病名array）
-
-        $id = $order->id;
-                                                
-        $response->rows[$i]['id']=$id;
-        $response->rows[$i]['cell']=array($id,$order->id,$order->order_no,$order->description,$order->guaranty_charge, $order->guaranty_count,
-        $order->additional_count,$order->additional_unit_price,$order->other_charge,$subtotal);     
-        $i++;  
-                
-                
-
-        
-
- 
-}//end for
-    
-    $response->userdata = array('order_no'=>'合計' ,'sub_total'=> $total);
-
-  $count = $i;
+                ->all();     
                     
-
-    if( $count >0 ) { 
-        $total_pages = ceil($count/$limit); 
-    } else { 
-        $total_pages = 0; 
-    }               
-
-
-
-    
-    
-    
-if ($page > $total_pages) $page=$total_pages; 
-$start = $limit*$page - $limit; // do not put $limit*($page - 1)            
-
-
-      
-    
-$response->page = $page; 
-$response->total = $total_pages; 
-$response->records = $count;
-
-  
- 
- }
-       
-       //debug($response); die();         
-        $this->set('response',$response);         
+            //debug($modelName.$check_str.$payer_type.$payer_id);   
             
-            
+            $page = $this->request->data['page']; // get the requested page 
+            $limit = $this->request->data['rows']; // get how many rows we want to have into the grid 
+            $sidx = $this->request->data['sidx']; // get index row - i.e. user click to sort 
+            $sord = $this->request->data['sord']; // get the direction        
+
+            if(!$sidx) $sidx =1; 
+
+
+
+            $response = new \stdClass;
         
+            $i=0; 
+            $subtotal = 0;
+            $total = 0;
+            //pr($billDetailInfo);die;
+            foreach ($orders as $order){ 
+                        
+                            
+            //['id','bill_id','受注No','保証料金','保証人数','追加人数','追加料金単価','その他料金']
+                $subtotal = $order->guaranty_charge + 
+                $order->additional_count * $order->additional_unit_price + $order->other_charge;    
+                $total += $subtotal;
+                        
+                    
+                // jqgrid用repsonse配列にセット（疾病名array）
+
+                $id = $order->id;
+                                                        
+                $response->rows[$i]['id']=$id;
+                $response->rows[$i]['cell']=array($id,$order->id,$order->order_no,$order->description,$order->guaranty_charge, $order->guaranty_count,
+                $order->additional_count,$order->additional_unit_price,$order->other_charge,$subtotal);     
+                $i++;                 
+
+            
+            }//end for
+        
+                $response->userdata = array('order_no'=>'合計' ,'sub_total'=> $total);
+
+            $count = $i;
+                        
+
+            if( $count >0 ) { 
+                $total_pages = ceil($count/$limit); 
+            } else { 
+                $total_pages = 0; 
+            }               
+
+        
+            if ($page > $total_pages) $page=$total_pages; 
+            $start = $limit*$page - $limit; // do not put $limit*($page - 1)            
+
+                
+            $response->page = $page; 
+            $response->total = $total_pages; 
+            $response->records = $count;
+
+    
+            return $this->response->withStringBody(json_encode($response)); 
+            //debug($response); die();         
+            //  $this->set('response',$response);         
+        }
+        
+            
     }
 
 
-public function ajaxloadbilldetails($bill_id){
+    public function ajaxloadbilldetails($bill_id){
 
-                    // デバッグ情報出力を抑制
-            Configure::write('debug', true);
-            // ajaxによる呼び出し？
-            if($this->request->is("ajax")) {
-                
-  
-        
+                // デバッグ情報出力を抑制
+        Configure::write('debug', true);
+        // ajaxによる呼び出し？
+        if($this->request->is("ajax")) {
+            
             //請求明細情報取得
             $orders = $this->Orders->find()
                 ->contain(['Clients','WorkPlaces','WorkContents'])
                 ->where(["Orders.bill_id" => $bill_id])
                 ->all();                        
         
-
-    
-        
-                $page = $_POST['page']; // get the requested page 
-                $limit = $_POST['rows']; // get how many rows we want to have into the grid 
-                $sidx = $_POST['sidx']; // get index row - i.e. user click to sort 
-                $sord = $_POST['sord']; // get the direction        
-
-                if(!$sidx) $sidx =1; 
-
-
- 
-
-    
-      $response = new \stdClass;
-      
- $i=0; 
- $subtotal = 0;
- $total = 0;
- //pr($billDetailInfo);die;
-foreach ($orders as $order){ 
             
+            $page = $this->request->data['page']; // get the requested page 
+            $limit = $this->request->data['rows']; // get how many rows we want to have into the grid 
+            $sidx = $this->request->data['sidx']; // get index row - i.e. user click to sort 
+            $sord = $this->request->data['sord']; // get the direction        
 
-//['id','bill_id','受注No','保証料金','保証人数','追加人数','追加料金単価','その他料金']
-    $subtotal = $order->guaranty_charge + 
-    $order->additional_count * $order->additional_unit_price + $order->other_charge;    
-    $total += $subtotal;
-            
+            if(!$sidx) $sidx =1; 
+
+    
+            $response = new \stdClass;
         
-        // jqgrid用repsonse配列にセット（疾病名array）
+            $i=0; 
+            $subtotal = 0;
+            $total = 0;
+            //pr($billDetailInfo);die;
+            foreach ($orders as $order){ 
+                
 
-        $id = $order->id;
-                                                
-        $response->rows[$i]['id']=$id;
-        $response->rows[$i]['cell']=array($id,$order->id,$order->order_no,$order->description,$order->guaranty_charge, $order->guaranty_count,
-        $order->additional_count,$order->additional_unit_price,$order->other_charge,$subtotal);     
-        $i++;  
+                //['id','bill_id','受注No','保証料金','保証人数','追加人数','追加料金単価','その他料金']
+                $subtotal = $order->guaranty_charge + 
+                $order->additional_count * $order->additional_unit_price + $order->other_charge;    
+                $total += $subtotal;
+                
+            
+                // jqgrid用repsonse配列にセット（疾病名array）
+
+                $id = $order->id;
+                                                        
+                $response->rows[$i]['id']=$id;
+                $response->rows[$i]['cell']=array($id,$order->id,$order->order_no,$order->description,$order->guaranty_charge, $order->guaranty_count,
+                $order->additional_count,$order->additional_unit_price,$order->other_charge,$subtotal);     
+                $i++;  
+
+            
+            }//end for
+        
+            $response->userdata = array('order_no'=>'合計' ,'sub_total'=> $total);
+                
+            $count = $i;
+                        
+
+            if( $count >0 ) { 
+                $total_pages = ceil($count/$limit); 
+            } else { 
+                $total_pages = 0; 
+            }               
 
         
-}//end for
-    
- $response->userdata = array('order_no'=>'合計' ,'sub_total'=> $total);
-     
-  $count = $i;
-                    
+            if ($page > $total_pages) $page=$total_pages; 
+            $start = $limit*$page - $limit; // do not put $limit*($page - 1)
+                
+                
+            $response->page = $page; 
+            $response->total = $total_pages; 
+            $response->records = $count;
 
-    if( $count >0 ) { 
-        $total_pages = ceil($count/$limit); 
-    } else { 
-        $total_pages = 0; 
-    }               
-
-
-
-    
-    
-    
-if ($page > $total_pages) $page=$total_pages; 
-$start = $limit*$page - $limit; // do not put $limit*($page - 1)            
-
-
-      
-    
-$response->page = $page; 
-$response->total = $total_pages; 
-$response->records = $count;
-
- 
- }
-           
-        $this->set('response',$response);         
+            return $this->response->withStringBody(json_encode($response));             
+            // $this->set('response',$response);         
+        }
+                
             
-            
-        
     }
 
 
@@ -593,13 +559,11 @@ $response->records = $count;
 
 
     function ajaxsavereceiveddate(){
-        
 
-        
             // ajaxによる呼び出し？
         if($this->request->is("ajax")) {
-            $bill_id = $_POST['bill_id'];
-            $value = $_POST['value'];
+            $bill_id = $this->request->data['bill_id'];
+            $value = $this->request->data['value'];
             $newData = $this->Bills->newEntity();   
             $bill = $this->Bills->get($bill_id, [
                 'contain' => []
@@ -615,8 +579,9 @@ $response->records = $count;
              
  
         }
+        return $this->response->withStringBody(json_encode($result));
 
-        $this->set('result',$result);      
+        // $this->set('result',$result);      
         
         
         
@@ -626,8 +591,8 @@ $response->records = $count;
     public function setbaddebt($back = 'index')
     {
         //debug($this->request->data);die();
+
         $this->request->allowMethod(['post']);
-        
         $id = $this->request->data['data']['id'];
         $partner_id = $this->request->data['data']['business_partner_id'];
         $year = $this->request->data['data']['year'];

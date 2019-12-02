@@ -79,6 +79,20 @@ class BillsFixture extends TestFixture
                 'uncollectible' => null,
                 'notes' => ''
             ],
+            [
+                'id' => 5,
+                'bill_no' => 'A2323',
+                'due_date' => '2019-12-31 00:00:00',
+                'bill_sent_date' => '2019-11-05 00:00:00',
+                'is_sent' => null,
+                'business_partner_id' => 1,
+                'total_value' => 200000,
+                'consumption_tax' => 20000,
+                'total_charge' => 220000,
+                'received_date' => null,
+                'uncollectible' => null,
+                'notes' => ''
+            ],
         ];
         parent::init();
     }

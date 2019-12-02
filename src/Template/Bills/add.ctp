@@ -26,8 +26,7 @@ var lastSel = null;
 var CONSUMPTIONTAX_RATE = 0.1;
 
 
-$(document).ready(function(){  
-
+$(document).ready(function(){
 
     jQuery("#list").jqGrid({
          url:"/aoba_business_system/bills/ajaxcreatebilldetails/" + "<?=$check_str ?>",

@@ -142,42 +142,42 @@ $(document).ready(function(){
 
 function viewBill(bill_id){
   
-    var year = $("[name=date\\[year\\]]").val();
-var month = $("[name=date\\[month\\]]").val();   
+  var year = $("[name=date\\[year\\]]").val();
+  var month = $("[name=date\\[month\\]]").val();   
 
 
  var Url = "/aoba_business_system/bills/view/" + bill_id + "/" + year + "/" + month;
  //urlはプロジェクト名/コントローラー名アンダーライン型/アクション名小文字
 
-// location.href= Url;
-open( Url, "_blank" ) ;
+  // location.href= Url;
+  open( Url, "_blank" ) ;
 
 }
 
 function editBill(bill_id){
   
-    var year = $("[name=date\\[year\\]]").val();
-var month = $("[name=date\\[month\\]]").val();   
+  var year = $("[name=date\\[year\\]]").val();
+  var month = $("[name=date\\[month\\]]").val();   
 
 
  var Url = "/aoba_business_system/bills/edit/" + bill_id + "/" + year + "/" + month;
  //urlはプロジェクト名/コントローラー名アンダーライン型/アクション名小文字
 
-// location.href= Url;
-open( Url, "_blank" ) ;
+  // location.href= Url;
+  open( Url, "_blank" ) ;
 
 }
 
 function bill_search(){
   
-//検索条件取得
-var year = $("[name=date\\[year\\]]").val();
-var month = $("[name=date\\[month\\]]").val();
-var status = $("[name=状況]").val();
-var partner_id = $("[name=請求先]").val();
-if(partner_id == ''){
-  partner_id = 0;
-}
+  //検索条件取得
+  var year = $("[name=date\\[year\\]]").val();
+  var month = $("[name=date\\[month\\]]").val();
+  var status = $("[name=状況]").val();
+  var partner_id = $("[name=請求先]").val();
+  if(partner_id == ''){
+    partner_id = 0;
+  }
  var Url = "/aoba_business_system/bills/indexAll/" + partner_id + "/" + year + "/" + month + "/" + status;
  //urlはプロジェクト名/コントローラー名アンダーライン型/アクション名小文字
 
@@ -188,63 +188,57 @@ if(partner_id == ''){
 
  function bill_delete(id){
  
- if(!confirm('本当に # ' + id + 'の請求書情報を削除して宜しいでしょうか?')){
-     return false;
- }
- 
+  if(!confirm('本当に # ' + id + 'の請求書情報を削除して宜しいでしょうか?')){
+      return false;
+  }
   
-//検索条件取得
-var year = $("[name=date\\[year\\]]").val();
-var month = $("[name=date\\[month\\]]").val();
-
-
- var Url = "/aoba_business_system/bills/delete/indexAll";
- //urlはプロジェクト名/コントローラー名アンダーライン型/アクション名小文字
-
-
- var data = {};
- var data ={'data[year]':year,'data[month]':month,
-    'data[id]':id,'data[business_partner_id]':0};
     
+  //検索条件取得
+  var year = $("[name=date\\[year\\]]").val();
+  var month = $("[name=date\\[month\\]]").val();
 
 
- //location.href= Url;
- 
-execPost(Url, data);
+  var Url = "/aoba_business_system/bills/delete/indexAll";
+  //urlはプロジェクト名/コントローラー名アンダーライン型/アクション名小文字
+
+
+  var data = {};
+  var data ={'data[year]':year,'data[month]':month,
+      'data[id]':id,'data[business_partner_id]':0};
+    
+  execPost(Url, data);
     
 }
 
 function setBadDebt(id, mode){
- if(mode == 'bad'){
-     $message = 'を貸し倒れに設定';
- }else{
-    $message = 'の貸し倒れ設定を削除';
- }
- 
- if(!confirm('本当に # ' + id + 'の請求書' + $message + 'しますか?')){
-     return false;
- }
- 
+  if(mode == 'bad'){
+      $message = 'を貸し倒れに設定';
+  }else{
+      $message = 'の貸し倒れ設定を削除';
+  }
+  
+  if(!confirm('本当に # ' + id + 'の請求書' + $message + 'しますか?')){
+      return false;
+  }
+  
 
-//検索条件取得
-var year = $("[name=date\\[year\\]]").val();
-var month = $("[name=date\\[month\\]]").val();
-var business_partner_id = $("#business-partner-id").val();
-
- var Url = "/aoba_business_system/bills/setbaddebt/indexAll";
- //urlはプロジェクト名/コントローラー名アンダーライン型/アクション名小文字
-
-
- var data = {};
- var data ={'data[year]':year,'data[month]':month,'data[mode]':mode,
-    'data[id]':id,'data[business_partner_id]':business_partner_id};
-    
+  //検索条件取得
+  var year = $("[name=date\\[year\\]]").val();
+  var month = $("[name=date\\[month\\]]").val();
+  var business_partner_id = $("#business-partner-id").val();
+  if(business_partner_id == null){
+    business_partner_id = 0;
+  }
+  var Url = "/aoba_business_system/bills/setbaddebt/indexAll";
+  //urlはプロジェクト名/コントローラー名アンダーライン型/アクション名小文字
 
 
- //location.href= Url;
- 
-execPost(Url, data);  
-                               
+  var data = {};
+  var data ={'data[year]':year,'data[month]':month,'data[mode]':mode,
+      'data[id]':id,'data[business_partner_id]':business_partner_id,
+      '_csrfToken':<?= json_encode($this->request->getParam('_csrfToken')); ?>};
+
+  execPost(Url, data);                               
     
 }
 

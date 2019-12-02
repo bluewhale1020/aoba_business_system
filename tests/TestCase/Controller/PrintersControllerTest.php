@@ -88,7 +88,17 @@ class PrintersControllerTest extends TestCase
      */
     public function testPrintBill()
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $filename = 'invoice.xlsx';
+        $filename = "no_B3333_".$filename;
+        $expected = TMP.'excels'. DS . $filename;
+
+
+        $this->get('/Printers/printBill/1');
+        $this->assertNoRedirect();  
+        $this->assertEquals($filename,$this->viewVariable('filename'));         
+        $this->assertEquals($expected,$this->viewVariable('path'));         
+        $this->assertTemplate('print_bill');
+        $this->assertResponseContains("xml");
     }
 
     /**
@@ -98,7 +108,17 @@ class PrintersControllerTest extends TestCase
      */
     public function testPrintDeliverySlip()
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $filename = 'delivery_slip.xlsx';
+        $filename = "no_B3333_".$filename;
+        $expected = TMP.'excels'. DS . $filename;
+
+
+        $this->get('/Printers/printDeliverySlip/1');
+        $this->assertNoRedirect();  
+        $this->assertEquals($filename,$this->viewVariable('filename'));         
+        $this->assertEquals($expected,$this->viewVariable('path'));         
+        $this->assertTemplate('print_delivery_slip');
+        $this->assertResponseContains("xml");
     }
 
     /**
@@ -129,7 +149,7 @@ class PrintersControllerTest extends TestCase
      */
     public function testPrintIrradiationRecord()
     {
-        $filename = 'noorder1_irradiation record.xlsx';
+        $filename = 'no_order1_irradiation record.xlsx';
         $expected = TMP.'excels'. DS . $filename;
 
 
@@ -148,7 +168,7 @@ class PrintersControllerTest extends TestCase
      */
     public function testPrintWorkSheet()
     {
-        $filename = 'noorder1_work_sheet.xlsx';
+        $filename = 'no_order1_work_sheet.xlsx';
         $expected = TMP.'excels'. DS . $filename;
 
 
@@ -168,7 +188,7 @@ class PrintersControllerTest extends TestCase
      */
     public function testPrintOrderConfirmation()
     {
-        $filename = 'noorder1_order_confirmation.xlsx';
+        $filename = 'no_order1_order_confirmation.xlsx';
         $expected = TMP.'excels'. DS . $filename;
 
 

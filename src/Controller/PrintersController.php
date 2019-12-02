@@ -212,7 +212,6 @@ class PrintersController extends AppController {
     
         //Create new PHPExcel object　　
         $objReader = PHPExcel_IOFactory::createReader('Excel2007');
-        //$objReader = PHPExcel_IOFactory::createReader('Excel5');
         $objPHPExcel = $objReader -> load($path);
         
         
@@ -266,119 +265,87 @@ class PrintersController extends AppController {
         
           
       if($bill){ 
-        // 請求先
-        if($bill->has('business_partner')){
-            $sheet -> setCellValue("A4", $bill->business_partner->name);
-        }
-         // 請求No
-        $sheet -> setCellValue("AE1", $bill->bill_no);
- 
- 
-        //請求明細
-        $total = 0;
-        $subtotal = 0;
-        $row_idx = 16;
-        foreach ($bill->orders as $order):
-            $subtotal = $order->guaranty_charge + 
-            $order->additional_count * $order->additional_unit_price + $order->other_charge;    
-            $total += $subtotal;
-        
-        //品名
-        $sheet -> setCellValue("A" . $row_idx, $order->description);
-        
-		//数量
-			$sheet -> setCellValue("M" . $row_idx, 1);
-        
-        //単価
-        $sheet -> setCellValue("P" . $row_idx, Number::currency($subtotal, "JPY"));
-        
-        //金額
-        $sheet -> setCellValue("U" . $row_idx, Number::currency($subtotal, "JPY"));
-        
-         
-        $row_idx++;
-        if($row_idx >24 ){
-            $sheet -> setCellValue("A11","明細の項目数が用紙の最大行を超えています！");
-                           
-            break;
-        }
-        
-        endforeach;
- 
- 
-   
+            // 請求先
+            if($bill->has('business_partner')){
+                $sheet -> setCellValue("A4", $bill->business_partner->name);
+            }
+            // 請求No
+            $sheet -> setCellValue("AE1", $bill->bill_no);
+    
+    
+            //請求明細
+            $total = 0;
+            $subtotal = 0;
+            $row_idx = 16;
+            foreach ($bill->orders as $order):
+                $subtotal = $order->guaranty_charge + 
+                $order->additional_count * $order->additional_unit_price + $order->other_charge;    
+                $total += $subtotal;
+            
+                //品名
+                $sheet -> setCellValue("A" . $row_idx, $order->description);
+                
+                //数量
+                    $sheet -> setCellValue("M" . $row_idx, 1);
+                
+                //単価
+                $sheet -> setCellValue("P" . $row_idx, Number::currency($subtotal, "JPY"));
+                
+                //金額
+                $sheet -> setCellValue("U" . $row_idx, Number::currency($subtotal, "JPY"));
+                
+                
+                $row_idx++;
+                if($row_idx >24 ){
+                    $sheet -> setCellValue("A11","明細の項目数が用紙の最大行を超えています！");
+                                
+                    break;
+                }
+            
+            endforeach;
+    
+    
+    
             // 合計金額
-           $sheet -> setCellValue("U25", Number::currency($total, "JPY"));
+            $sheet -> setCellValue("U25", Number::currency($total, "JPY"));
 
-        // 消費税
+            // 消費税
 
             $sheet -> setCellValue("AB14", Number::currency($bill->consumption_tax, "JPY"));
 
-        
-        // 総額
+
+            // 総額
 
             $sheet -> setCellValue("F13", Number::currency(($total + $bill->consumption_tax), "JPY"));
 
         } 
 
 
-
-
-
-
         
         // Excelファイルの保存 ------------------------------------------
     
         //ファイル名作成
-        $filename = "no" . $bill->bill_no ."_".$filename;
+        $filename = "no_" . $bill->bill_no ."_".$filename;
         $savepath = $uploadDir . $filename;
     
-    
-        //$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
-    
-        //  $objWriter = new PHPExcel_Writer_Excel5( $objPHPExcel );
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
     
         $objWriter -> save($savepath);
-    
-        $this -> set('filename', $filename);
-    
-        $this -> set('path', $savepath);
     
         //    Free up some of the memory
         $objPHPExcel -> disconnectWorksheets();
         unset($objPHPExcel);    
 
 
+        $this -> set('filename', $filename);
+    
+        $this -> set('path', $savepath);
 
-       
-        $this->autoRender = false;
+        $this->layout = false;            
+    
+        $this -> render("print_bill");
 
-        // ファイルがcake/app/webroot/files以下にあるとき
-        // WWW_ROOT, DS は定数 公式サイト参照
-        //$file_path = WWW_ROOT.'files'.DS.$file_name;
-
-        
-        //ファイルの種類によってContent-Typeを指定　後述するfirefoxのため。
-        $this->response->type('excel');
-        
-        // response->file()でダウンロードもしくは表示するファイルをセット
-        $this->response->file(
-          //ファイルパス
-          $savepath,
-          [
-            //ダウンロードしたときのファイル名。省略すれば元のファイル名。
-            'name'=> $filename,
-            //これは必須
-            'download'=>true,
-          ]
-        );
-
-
-        set_time_limit($default); 
-
-
-        
+        set_time_limit($default);        
     }
     
     public function printDeliverySlip($bill_id){
@@ -407,7 +374,6 @@ class PrintersController extends AppController {
     
         //Create new PHPExcel object　　
         $objReader = PHPExcel_IOFactory::createReader('Excel2007');
-        //$objReader = PHPExcel_IOFactory::createReader('Excel5');
         $objPHPExcel = $objReader -> load($path);
         
         
@@ -547,49 +513,25 @@ class PrintersController extends AppController {
         // Excelファイルの保存 ------------------------------------------
     
         //ファイル名作成
-        $filename = "no" . $bill->bill_no ."_".$filename;
+        $filename = "no_" . $bill->bill_no ."_".$filename;
         $savepath = $uploadDir . $filename;
-    
-    
-        //$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
-    
-        //  $objWriter = new PHPExcel_Writer_Excel5( $objPHPExcel );
+
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
     
         $objWriter -> save($savepath);
     
-        $this -> set('filename', $filename);
-    
-        $this -> set('path', $savepath);
     
         //    Free up some of the memory
         $objPHPExcel -> disconnectWorksheets();
         unset($objPHPExcel);    
 
+        $this -> set('filename', $filename);
+    
+        $this -> set('path', $savepath);
 
-
-       
-        $this->autoRender = false;
-
-        // ファイルがcake/app/webroot/files以下にあるとき
-        // WWW_ROOT, DS は定数 公式サイト参照
-        //$file_path = WWW_ROOT.'files'.DS.$file_name;
-
-        
-        //ファイルの種類によってContent-Typeを指定　後述するfirefoxのため。
-        $this->response->type('excel');
-        
-        // response->file()でダウンロードもしくは表示するファイルをセット
-        $this->response->file(
-          //ファイルパス
-          $savepath,
-          [
-            //ダウンロードしたときのファイル名。省略すれば元のファイル名。
-            'name'=> $filename,
-            //これは必須
-            'download'=>true,
-          ]
-        );
+        $this->layout = false;            
+    
+        $this -> render("print_delivery_slip");
 
 
         set_time_limit($default); 
@@ -842,7 +784,7 @@ class PrintersController extends AppController {
             // Excelファイルの保存 ------------------------------------------
         
             //ファイル名作成
-            $filename = "no" . $order->order_no ."_".$filename;
+            $filename = "no_" . $order->order_no ."_".$filename;
             $savepath = $uploadDir . $filename;
         
             $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
@@ -1118,7 +1060,7 @@ class PrintersController extends AppController {
             // Excelファイルの保存 ------------------------------------------
         
             //ファイル名作成
-            $filename = "no" . $order->order_no ."_".$filename;
+            $filename = "no_" . $order->order_no ."_".$filename;
             $savepath = $uploadDir . $filename;
         
             $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
@@ -1282,7 +1224,7 @@ class PrintersController extends AppController {
         // Excelファイルの保存 ------------------------------------------
     
         //ファイル名作成
-        $filename = "no" . $order->order_no ."_".$filename;
+        $filename = "no_" . $order->order_no ."_".$filename;
         $savepath = $uploadDir . $filename;
     
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
