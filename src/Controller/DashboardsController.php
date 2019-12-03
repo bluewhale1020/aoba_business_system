@@ -27,19 +27,24 @@ class DashboardsController  extends AppController
     public function index()
     {
         // 今月受注数・作業中・作業完了未請求レコードを集計
-        $targetDate = new \DateTime('2019-11-10');
+        $targetDate = new \DateTime();
         $conditions[] = ["Orders.start_date BETWEEN '".$targetDate->format("Y-m-1")."' AND '".$targetDate->format("Y-m-t")."'"]; 
 
         // 今月受注数
         $stat['order_count'] = $this->Orders->find()
         ->where($conditions)
         ->count(); 
-        // 作業実施中
+        // 作業実施中(未完了)
         $conditions2[] = [
-            "Orders.start_date <= '".$targetDate->format("Y-m-d")."'"
-            ,"Orders.end_date >= '".$targetDate->format("Y-m-d")."'"]; 
+            "Orders.temporary_registration"=>0,
+            "Orders.start_date <= '".$targetDate->format("Y-m-d")."'",
+            "Orders.end_date >= '".$targetDate->format("Y-m-d")."'"
+        ]; 
 
         $stat['ongoing_count'] = $this->Orders->find()
+        ->matching('Works', function($q) {
+            return $q->where(['Works.done' => 0]);
+            })          
         ->where($conditions2)
         ->count();   
 
@@ -90,10 +95,10 @@ class DashboardsController  extends AppController
 
         // ajaxによる呼び出し？
         if ($this->request->is("ajax")) {
-            $start_year = (int)$_POST['start_year'];
-            $start_mon = (int)$_POST['start_mon'];
-            $end_year = (int)$_POST['end_year'];
-            $end_mon = (int)$_POST['end_mon'];
+            $start_year = (int)$this->request->data['start_year'];
+            $start_mon = (int)$this->request->data['start_mon'];
+            $end_year = (int)$this->request->data['end_year'];
+            $end_mon = (int)$this->request->data['end_mon'];
 
             $m = $start_mon;
             $y = $start_year;
@@ -128,7 +133,10 @@ class DashboardsController  extends AppController
             
             $order_count = $this->Orders->get_charged_order_count($start_date, $end_date);
             $total_sales = $this->Orders->get_total_sales($start_date, $end_date);
-            $this->set('result',['chartdata'=>$data,'order_count'=>$order_count,'total_sales'=>$total_sales]);      
+            
+            return $this->response->withStringBody(json_encode(['chartdata'=>$data,'order_count'=>$order_count,'total_sales'=>$total_sales]));
+
+            // $this->set('result',['chartdata'=>$data,'order_count'=>$order_count,'total_sales'=>$total_sales]);      
 
         }
   
@@ -139,9 +147,9 @@ class DashboardsController  extends AppController
     {
 
         // ajaxによる呼び出し？
-        // if ($this->request->is("ajax")) {
-            $startDate = $_POST['startDate'];
-            $endDate = $_POST['endDate'];
+        if ($this->request->is("ajax")) {
+            $startDate = $this->request->data['startDate'];
+            $endDate = $this->request->data['endDate'];
 
             $events = $this->Orders->get_calendar_data($startDate, $endDate);
             // $this->set('result',$events);return;
@@ -155,18 +163,20 @@ class DashboardsController  extends AppController
                     $color = '#3D9970';
                 }
                 $eventList[] = [
-            'id' => $event->works[0]->id,
-            'title' => $event->work_place->name,
-            // 'description' => $event->description,
-            'start' => $event->start_date.((!empty($event->start_time) ? " ".explode(' ',$event->start_time)[1]  : " 00:00")),
-            'end' => $event->end_date.((!empty($event->end_time) ? " ".explode(' ',$event->end_time)[1] : " 23:59")),
-            'color' => $color,
-            // 'textColor' => $event->calendar_text_color
-        ];
+                    'id' => $event->works[0]->id,
+                    'title' => $event->work_place->name,
+                    // 'description' => $event->description,
+                    'start' => $event->start_date.((!empty($event->start_time) ? " ".explode(' ',$event->start_time)[1]  : " 00:00")),
+                    'end' => $event->end_date.((!empty($event->end_time) ? " ".explode(' ',$event->end_time)[1] : " 23:59")),
+                    'color' => $color,
+                    // 'textColor' => $event->calendar_text_color
+                ];
+                
             }
-        
-            $this->set('result',$eventList);
+            
+            return $this->response->withStringBody(json_encode($eventList));
+            // $this->set('result',$eventList);
         }
-    // }   
+    }   
 
 }

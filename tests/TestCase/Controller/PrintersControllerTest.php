@@ -78,7 +78,33 @@ class PrintersControllerTest extends TestCase
      */
     public function testPrintOpnumTable()
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $token = 'my-csrf-token';
+        $this->cookie('csrfToken', $token);
+
+        $this->configRequest([
+            'headers' => [
+                'X-CSRF-Token' => $token,
+            ],
+        ]);        
+        $filename = 'opnum_table.xlsx';
+        $filename = (new \DateTime())->format("Ymd") ."_".$filename;
+        $expected = TMP.'excels'. DS . $filename;
+
+        $data = [
+            'start_year'=>2019,    
+            'start_mon'=>10,    
+            'end_year'=>2019,    
+            'end_mon'=>12,    
+            ];        
+
+        $this->post('/Printers/printOpnumTable', $data);
+        $this->assertResponseCode(200);        
+ 
+        $this->assertEquals($filename,$this->viewVariable('filename'));         
+        $this->assertEquals($expected,$this->viewVariable('path'));         
+        $this->assertTemplate('print_opnum_table');
+        $this->assertResponseContains("xml");
+
     }
 
     /**

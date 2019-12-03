@@ -26,12 +26,16 @@ class PrintersController extends AppController {
 
 
 	public function printOpnumTable(){
+
+		$default = ini_get('max_execution_time');
+		set_time_limit(0);
+
 		$this->EquipmentRentals = TableRegistry::get('EquipmentRentals');
 		
-		$start_year = (int)$_GET['start_year'];
-		$start_mon = (int)$_GET['start_mon'];
-		$end_year = (int)$_GET['end_year'];
-		$end_mon = (int)$_GET['end_mon'];
+		$start_year = (int)$this->request->data['start_year'];
+		$start_mon = (int)$this->request->data['start_mon'];
+		$end_year = (int)$this->request->data['end_year'];
+		$end_mon = (int)$this->request->data['end_mon'];
 
 		$m = $start_mon;
 		$y = $start_year;
@@ -68,11 +72,7 @@ class PrintersController extends AppController {
 			}
 		}
 
-		//データをエクセルファイルに出力
-
-		$default = ini_get('max_execution_time');
-		set_time_limit(0);
-	
+		//データをエクセルファイルに出力	
 		//excelファイルの生成
 		$filename = 'opnum_table.xlsx';
 	
@@ -84,7 +84,6 @@ class PrintersController extends AppController {
 		
 		//Create new PHPExcel object　　
 		$objReader = PHPExcel_IOFactory::createReader('Excel2007');
-		//$objReader = PHPExcel_IOFactory::createReader('Excel5');
 		$objPHPExcel = $objReader -> load($path);
 	
 		//Set active sheet index to the first sheet, so Excel opens this as the first sheet
@@ -163,24 +162,14 @@ class PrintersController extends AppController {
 		$objPHPExcel -> disconnectWorksheets();
 		unset($objPHPExcel);             
 		
+        $this -> set('filename', $filename);
+    
+        $this -> set('path', $savepath);
 
+        $this->layout = false;            
+    
+        $this -> render("print_opnum_table");
 
-		$this->autoRender = false;
-		
-		//ファイルの種類によってContent-Typeを指定　後述するfirefoxのため。
-		$this->response->type('excel');
-		
-		// response->file()でダウンロードもしくは表示するファイルをセット
-		$this->response->file(
-			//ファイルパス	
-			$savepath,
-			[
-				//ダウンロードしたときのファイル名。省略すれば元のファイル名。
-				'name'=> $filename,
-				//これは必須
-				'download'=>true,
-			]
-		);
 
 		set_time_limit($default);
 	}

@@ -37,10 +37,10 @@ class StatisticsController extends AppController
 
         // ajaxによる呼び出し？
         if ($this->request->is("ajax")) {
-            $start_year = (int)$_POST['start_year'];
-            $start_mon = (int)$_POST['start_mon'];
-            $end_year = (int)$_POST['end_year'];
-            $end_mon = (int)$_POST['end_mon'];
+            $start_year = (int)$this->request->data['start_year'];
+            $start_mon = (int)$this->request->data['start_mon'];
+            $end_year = (int)$this->request->data['end_year'];
+            $end_mon = (int)$this->request->data['end_mon'];
 
             //グラフのX軸データを期間から作成
             $m = $start_mon;
@@ -79,7 +79,9 @@ class StatisticsController extends AppController
                     $data[] = $temp;
                 }
             }
-            $this->set('result',['chartdata'=>$data]);      
+
+            return $this->response->withStringBody(json_encode(['chartdata'=>$data]));            
+            // $this->set('result',['chartdata'=>$data]);      
 
         }
   

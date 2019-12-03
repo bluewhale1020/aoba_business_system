@@ -4,7 +4,7 @@ namespace App\Test\Fixture;
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * OrdersFixture
+ * Orders3Fixture
  */
 class Orders3Fixture extends TestFixture
 {
@@ -90,7 +90,8 @@ class Orders3Fixture extends TestFixture
                 'start_date'=>$early_date,
                 'end_date'=>$today_date,
                 'is_charged'=>0,
-            ],        
+            ],      
+            //以下 works.done = 1  
             [
                 'id'=>6,
                 'order_no'=>'order6',
