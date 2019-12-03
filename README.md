@@ -1,51 +1,147 @@
-# CakePHP Application Skeleton
+<a href="https://github.com/cakephp/cakephp"><img src="https://img.shields.io/badge/cakePHP-3.8.*-brightgreen.svg?style=flat-square" alt="CakePHP3"></a>
+<img src="https://img.shields.io/badge/license-Apache-blue.svg?style=flat-square" alt="license">
 
-[![Build Status](https://img.shields.io/travis/cakephp/app/master.svg?style=flat-square)](https://travis-ci.org/cakephp/app)
-[![Total Downloads](https://img.shields.io/packagist/dt/cakephp/app.svg?style=flat-square)](https://packagist.org/packages/cakephp/app)
+# AOBA Business System
 
-A skeleton for creating applications with [CakePHP](https://cakephp.org) 3.x.
+**AOBA Business System**は弊社内で利用する業務処理用システムの一つです。
 
-The framework source code can be found here: [cakephp/cakephp](https://github.com/cakephp/cakephp).
 
-## Installation
 
-1. Download [Composer](https://getcomposer.org/doc/00-intro.md) or update `composer self-update`.
-2. Run `php composer.phar create-project --prefer-dist cakephp/app [app_name]`.
+## 概要
 
-If Composer is installed globally, run
+青葉の業務で主に受注・現場作業計画・経費・売掛・請求処理をシステム上でまとめて管理する目的で Aoba業務システムは開発されました。
+また、取引先や現場作業で利用する装置やスタッフの管理、 簡単な統計資料を提供する機能も実装しました。
+
+
+
+## 機能一覧
+
++ ユーザー認証
+
++ アクセス制限
+
++ 取引先管理
+
++ 装置管理
+
++ スタッフ管理
+
++ 受注処理
+
++ 作業データの管理
+
++ 費用管理
+
++ 売掛金管理
+
++ 請求書管理
+
++ 統計データ
+
++ Topページのダッシュボード（各種データの集計、管理）
+
++ 各ページでの帳票出力
+
++ お知らせ機能
+
++ データインポート機能
+
+  
+## インストール手順
+
+### アプリケーションデータのインストール
 
 ```bash
-composer create-project --prefer-dist cakephp/app
+# このプロジェクトをウェブサーバー上にクローン
+git clone https://github.com/bluewhale1020/aoba_business_system.git
+
+# プロジェクトのディレクトリに移動
+cd aoba_business_system
+
+# PHPのパッケージをcomposerでインストール
+composer install
+
 ```
 
-In case you want to use a custom app dir name (e.g. `/myapp/`):
+### DBの設定
 
-```bash
-composer create-project --prefer-dist cakephp/app myapp
+DBサーバーを起動し、システム用の適当な名前のデータベースを作成します。`tmp/db_backup/Dump~.sql`ファイルにシステム用のテーブルデータが含まれているので、作成したデータベースにインポートします。
+
+### Config設定
+
+`app.php`ファイルの下記のDB設定の箇所を作成したデータベースに合わせて書き換えてください。
+
+```php
+    'Datasources' => [
+        'default' => [
+            // ...
+            'host' => 'localhost',
+            'username' => 'root',
+            'password' => 'password',
+            'database' => 'new_db',
+            // ...
+            ]
+        ]
 ```
 
-You can now either use your machine's webserver to view the default home page, or start
-up the built-in webserver with:
+Security.saltの値の変更
 
-```bash
-bin/cake server -p 8765
+```php
+    'Security' => [
+        'salt' => env('SECURITY_SALT', 'something long and containing lots of different values.'),
+    ],
 ```
 
-Then visit `http://localhost:8765` to see the welcome page.
 
-## Update
 
-Since this skeleton is a starting point for your application and various files
-would have been modified as per your needs, there isn't a way to provide
-automated upgrades, so you have to do any updates manually.
+### 設定状態の確認
 
-## Configuration
+正しい設定がなされているか確認するためには、adminユーザーでログイン後、サイドメニューの`SAMPLES/Debug`ページを開くと環境設定やデータベース接続状況が表示されます。
 
-Read and edit `config/app.php` and setup the `'Datasources'` and any other
-configuration relevant for your application.
 
-## Layout
 
-The app skeleton uses a subset of [Foundation](http://foundation.zurb.com/) (v5) CSS
-framework by default. You can, however, replace it with any other library or
-custom styles.
+## 使い方
+
+詳細についてはシステム内のマニュアルに記載
+
+
+
+### 登録済み管理者
+
+```
+ユーザー名： admin
+パスワード： admin
+役柄	   ： admin
+```
+
+
+
+### 役柄による利用制限
+
+ユーザーの役柄により、ログイン後のメニューの表示項目が変わります。
+
+#### 「admin」
+
+全て表示
+
+#### 「user」
+
+ユーザー管理・データインポート・レファレンスメニューが非表示
+
+## 動作環境
+
+開発時に想定した利用環境は以下の通り。
+
++ Windows10
++ PHP 7.2.11
++ CakePHP 3.8
++ Apache server 2.4.17
++ MariaDB 10.1.8
++ PHP拡張（ mbstring, simplexml, intl ）
+
+
+
+## ライセンス (License)
+
+**Medcheck**は[Apache license](https://github.com/bluewhale1020/aoba_business_system/blob/master/LICENSE)のもとで公開されています。<br />
+**AOBA Business System** is open-source software licensed under the [Apache license](https://github.com/bluewhale1020/aoba_business_system/blob/master/LICENSE).
