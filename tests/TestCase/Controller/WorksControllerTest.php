@@ -19,7 +19,7 @@ class WorksControllerTest extends IntegrationTestCase
      */
     public $fixtures = [
         'app.works',
-        'app.orders',
+        'app.OrdersController',
         // 'app.clients',
         // 'app.work_places',
         // 'app.bills',
@@ -82,7 +82,7 @@ class WorksControllerTest extends IntegrationTestCase
         $this->get('/works/index');
         $this->assertResponseOk();
         $this->assertResponseContains('作業一覧');
-        $this->assertCount(10, $this->viewVariable('works'));
+        $this->assertCount(3, $this->viewVariable('works'));
 
         $token = 'my-csrf-token';
         $this->cookie('csrfToken', $token);
@@ -92,7 +92,7 @@ class WorksControllerTest extends IntegrationTestCase
             '_csrfToken' => $token
         ];
         $this->post('/works/index', $data);
-        $this->assertCount(3, $this->viewVariable('works'));
+        $this->assertCount(6, $this->viewVariable('works'));
     }
 
     /**

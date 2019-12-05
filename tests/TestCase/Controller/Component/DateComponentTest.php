@@ -31,6 +31,35 @@ class DateComponentTest extends TestCase
     }
 
     /**
+     * setIndexDefaultDateRange method
+     *
+     * @return void
+     */
+    public function testSetIndexDefaultDateRange(){
+
+        $startDate = new \DateTime();
+        $endDate = (new \DateTime())->modify("+2 months");
+        $request_data = ['item'=>'data'];
+        $conditions = [['test line']];
+
+        list($request_data, $conditions) = $this->Date->setIndexDefaultDateRange($request_data,$conditions);
+        $expected_request = [
+            'item'=>'data',
+            'start_date' => $startDate->format("Y-m-1"),
+            'end_date' => $endDate->format("Y-m-t"),
+            'date_range' => $startDate->format("Y/m/1")." - ".$endDate->format("Y/m/t")
+        ];
+        $expected_cond = [
+            ['test line'],
+            ['start_date >=' => $startDate->format("Y-m-1")],
+            ['start_date <=' => $endDate->format("Y-m-t")]
+        ];
+        $this->assertEquals($expected_request,$request_data);
+        $this->assertEquals($expected_cond,$conditions);
+
+    }
+
+    /**
      * testGetGivenHolidays method
      *
      * @return void

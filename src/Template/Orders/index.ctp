@@ -18,10 +18,10 @@ $this->Html->script([
 
 $(document).ready(function(){  
 
-   // ロケールを設定
-    moment.locale('ja');
-    
-    $('#date-range').daterangepicker({
+  // ロケールを設定
+  moment.locale('ja');
+  
+  $('#date-range').daterangepicker({
         format:'YYYY/MM/DD',
         //singleDatePicker: true,
         autoUpdateInput:false,
@@ -41,11 +41,11 @@ $(document).ready(function(){
     }, 
     function(start, end, label) {
       $('#date-range').val(start.format('YYYY/MM/DD') + ' - ' + end.format('YYYY/MM/DD'));
-//start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+    //start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
     $("#start-date").val(start.format('YYYY/MM/DD'));
     $("#end-date").val(end.format('YYYY/MM/DD'));
 
-});
+  });
 
 
 
@@ -144,13 +144,11 @@ function create_options(dataArray){
 
 </script>
 <section class="content-header">
-<div id="alert_div"></div>
-
-
-<h1>
-注文一覧
-<small>登録されている注文データを管理します</small>
-</h1>
+  <div id="alert_div"></div>
+  <h1>
+  注文一覧
+  <small>登録されている注文データを管理します</small>
+  </h1>
 </section>
 <section class="content voffset4">
  
@@ -262,7 +260,7 @@ echo $this->Html->link(' 新規受注',[
 </div> 
    
   <div class="order-table">
-  <table class="table table-bordered table-hover table-striped">
+    <table class="table table-bordered table-hover table-striped">
       <thead>
              <tr class="bg-primary">
                 <th ><?= __('受注No') ?></th>
@@ -327,7 +325,7 @@ echo $this->Html->link(' 新規受注',[
           
       </tbody>      
       
-  </table>
+    </table>
   <div class="paginator">
     <ul class="pagination">
       <?php

@@ -3,7 +3,7 @@
   <div class="container">
   <?php endif; ?>
     <div class="pull-right hidden-xs">
-      <b>Version</b> 0.8.0
+      <b>Version</b> 1.0.0b
     </div>
     <strong>Copyright &copy; 2019 <a href="http://aobax.holy.jp/aobarentogen">Aoba Rentogen Ltd.</a>.</strong> All rights
     reserved.

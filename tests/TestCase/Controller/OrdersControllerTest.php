@@ -21,7 +21,7 @@ class OrdersControllerTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'app.Orders',
+        'app.OrdersController',
         'app.BusinessPartners',
         // 'app.WorkPlaces',
         // 'app.Payers',
@@ -78,7 +78,7 @@ class OrdersControllerTest extends TestCase
         $this->get('/Orders/index');
         $this->assertResponseOk();
         $this->assertResponseContains('注文一覧');
-        $this->assertCount(10, $this->viewVariable('orders'));
+        $this->assertCount(3, $this->viewVariable('orders'));
 
         $token = 'my-csrf-token';
         $this->cookie('csrfToken', $token);
@@ -89,7 +89,7 @@ class OrdersControllerTest extends TestCase
         ];
         $this->post('/Orders/index', $data);
         $orders =  $this->viewVariable('orders');
-        $this->assertEquals(3,count($orders));
+        $this->assertEquals(6,count($orders));
     }
 
     /**

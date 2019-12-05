@@ -37,6 +37,7 @@ class ImportComponent extends Component
         $result = ['data'=>null];
         $success = true;
         foreach ($rows as $rowdata) {
+            $msg = "";
             // データを整形	sort_import()
             $sorted_data = $this->sort_import($rowdata);
             // 書式内容をチェック
@@ -45,6 +46,7 @@ class ImportComponent extends Component
             if ($staff->errors()) {
                 // エンティティー検証失敗。
                 $returnData = false;
+                $msg = print_r($staff->errors(),true);                
             }else{
                 // データを保存 
                 $returnData = $this->tableModel->save($staff);
@@ -52,7 +54,7 @@ class ImportComponent extends Component
             }
 
             // 結果データを作成
-            list($each_result,$message) = $this->create_result($returnData,$rowdata['id'],$rowdata['氏名']);
+            list($each_result,$message) = $this->create_result($returnData,$rowdata['id'],$rowdata['氏名'],$msg);
 
             $result['data'][] = $each_result;
             $overall_message .= $message; 
@@ -72,26 +74,39 @@ class ImportComponent extends Component
 
         $overall_message = "";
         $result = ['data'=>null];
-        $success = true;        
+        $success = true;
         foreach ($rows as $rowdata) {
+            $has_client = false;        
+            $msg = "";
             //定休日[日月火水木金土] を 0~6　の数字に
             $rowdata = $this->tableModel->import_check_holidays($rowdata);
+            if(!empty($rowdata['請負元名称'])){
+                $has_client = true;
+            }
             // データを整形	sort_import()
             $sorted_data = $this->sort_import($rowdata);
-            // 書式内容をチェック
-            $partner = $this->tableModel->findOrNew($sorted_data['name']);
-            $partner = $this->tableModel->patchEntity($partner, $sorted_data);
-            if ($partner->errors()) {
-                // エンティティー検証失敗。
+            // debug($sorted_data);
+            if($has_client and empty($sorted_data['parent_id'])){
                 $returnData = false;
+                $msg = "請負元が登録されていません！";
             }else{
-                // データを保存 
-                $returnData = $this->tableModel->save($partner);
-    
+                // 書式内容をチェック
+                $partner = $this->tableModel->findOrNew($sorted_data['name']);
+                $partner = $this->tableModel->patchEntity($partner, $sorted_data);
+                if ($partner->errors()) {
+                    // エンティティー検証失敗。
+                    $returnData = false;
+                    $msg = print_r($partner->errors(),true);
+                    
+                }else{
+                    // データを保存 
+                    $returnData = $this->tableModel->save($partner);
+        
+                }
             }
 
             // 結果データを作成
-            list($each_result,$message) = $this->create_result($returnData,$rowdata['id'],$rowdata['取引先名称']);
+            list($each_result,$message) = $this->create_result($returnData,$rowdata['id'],$rowdata['取引先名称'],$msg);
 
             $result['data'][] = $each_result;
             $overall_message .= $message; 
@@ -115,6 +130,7 @@ class ImportComponent extends Component
         $result = ['data'=>null];
         $success = true;        
         foreach ($rows as $rowdata) {
+            $msg = "";
             // インポートデータの一部修正
             $rowdata = $this->tableModel->modify_import_order($rowdata);
 
@@ -130,6 +146,7 @@ class ImportComponent extends Component
             if ($order->errors()) {
                 // エンティティー検証失敗。
                 $returnData = false;
+                $msg = print_r($order->errors(),true);                
             }else{
                 // データを保存 
                 if($returnData = $this->tableModel->save($order)){
@@ -142,6 +159,7 @@ class ImportComponent extends Component
                         if (!$this->Works->save($work)) {
                             $this->tableModel->delete($returnData);
                             $returnData = false;
+                            $msg = "作業データの保存に失敗しました。";
                         }                                    
 
                     }
@@ -150,7 +168,7 @@ class ImportComponent extends Component
             }
 
             // 結果データを作成
-            list($each_result,$message) = $this->create_result($returnData,$rowdata['id'],$rowdata['受注No']);
+            list($each_result,$message) = $this->create_result($returnData,$rowdata['id'],$rowdata['受注No'],$msg);
 
             $result['data'][] = $each_result;
             $overall_message .= $message; 
@@ -166,7 +184,7 @@ class ImportComponent extends Component
     
 
     // データ保存結果の表示メッセージ作成
-    protected function create_result($returnData,$id,$name){
+    protected function create_result($returnData,$id,$name,$msg = ""){
         if($returnData != false){
 
             $result =array('id'=>$id,'result'=>1,'message'=>'結果登録完了');
@@ -176,7 +194,7 @@ class ImportComponent extends Component
         }else{		
             $result =array('id'=>$id,'result'=>0,'message'=>'<font color="red">エラー:結果登録失敗！</font>'); 
              $message ='<dl class="dl-horizontal"><dt>'.$name.'</dt>'.
-          '<dd ><font color="red">データのインポートに失敗しました。</font></dd></dl>';	
+          '<dd ><font color="red">データのインポートに失敗しました。'.$msg.'</font></dd></dl>';	
     
          }	
 

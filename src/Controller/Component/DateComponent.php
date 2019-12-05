@@ -24,6 +24,29 @@ class DateComponent extends Component
     }
 
     /**
+     * 今月から3か月間の条件データを設定して返す
+     * 
+     * @param array $requestData リクエストデータ
+     * @param array $conditions クエリに渡す条件
+     *
+     * @return array [$requestData, $conditions] 修正した各データ
+     */    
+    public function setIndexDefaultDateRange($requestData,$conditions = []){
+
+        $startDate = new \DateTime();
+        $endDate = (new \DateTime())->modify("+2 months");
+        $conditions[] = ['start_date >=' => $startDate->format("Y-m-1")];
+        $conditions[] = ['start_date <=' => $endDate->format("Y-m-t")];
+        $requestData += [
+            'start_date' => $startDate->format("Y-m-1"),
+            'end_date' => $endDate->format("Y-m-t"),
+            'date_range' => $startDate->format("Y/m/1")." - ".$endDate->format("Y/m/t")
+        ];  
+
+        return [$requestData, $conditions];
+    }
+
+    /**
      * @param string $strDate 調べたい日にち（Y-m-d）
      *
      * @return integer $year 年度

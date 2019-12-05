@@ -15,91 +15,88 @@ $this->Html->script([
 ?>    
     var work_places = <?php echo $jsonOptions; ?>;
 
-$(document).ready(function(){  
+  $(document).ready(function(){  
 
-   // ロケールを設定
-    moment.locale('ja');
+    // ロケールを設定
+      moment.locale('ja');
+      
+      $('#date-range').daterangepicker({
+          format:'YYYY/MM/DD',
+          //singleDatePicker: true,
+          autoUpdateInput:false,        
+          showDropdowns: true,
+                locale: {
+          applyLabel: 'これで決定',
+          cancelLabel: 'キャンセル',
+          fromLabel: '期間開始',
+          toLabel: '期間終了',
+          weekLabel: 'W',
+          
+          customRangeLabel: '自分で指定',
+          daysOfWeek: moment.weekdaysMin(),
+          monthNames: moment.monthsShort(),
+          firstDay: moment.localeData()._week.dow
+        },
+      }, 
+      function(start, end, label) {
+        $('#date-range').val(start.format('YYYY/MM/DD') + ' - ' + end.format('YYYY/MM/DD'));
+      //start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+      $("#start-date").val(start.format('YYYY/MM/DD'));
+      $("#end-date").val(end.format('YYYY/MM/DD'));
+
+    });
+
+
+
+
+      $('.done').on('change',function(){
+          
+          var work_id = $(this).attr('id');
+          
+          work_id = work_id.split('-')[1];
+          
+          ajaxsaveworksatus(work_id,$(this).val());
+          
+      }); 
+      
+      //請負元変更時処理
+      
+      $("[name=請負元]").change(function(){
+          
+          // $("[name=派遣先]").prop('disabled',false);
+          
+          var client_id =$(this).children(':selected').val();
+          
+          $("[name=派遣先]").children('option').remove();
+          var placeOptions = create_options(work_places[client_id]);
+          $("[name=派遣先]").append(placeOptions);
     
-    $('#date-range').daterangepicker({
-        format:'YYYY/MM/DD',
-        //singleDatePicker: true,
-        autoUpdateInput:false,        
-        showDropdowns: true,
-               locale: {
-         applyLabel: 'これで決定',
-         cancelLabel: 'キャンセル',
-         fromLabel: '期間開始',
-         toLabel: '期間終了',
-         weekLabel: 'W',
-         
-         customRangeLabel: '自分で指定',
-         daysOfWeek: moment.weekdaysMin(),
-         monthNames: moment.monthsShort(),
-         firstDay: moment.localeData()._week.dow
-       },
-    }, 
-    function(start, end, label) {
-      $('#date-range').val(start.format('YYYY/MM/DD') + ' - ' + end.format('YYYY/MM/DD'));
-//start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
-    $("#start-date").val(start.format('YYYY/MM/DD'));
-    $("#end-date").val(end.format('YYYY/MM/DD'));
+      });    
 
-});
+  });
 
 
+  function create_options(dataArray){
+      if(dataArray == undefined || dataArray.length == 0){
+              var options = '<option value="">選択可能な派遣先がありません！</option>';
 
-
-    $('.done').on('change',function(){
-        
-        var work_id = $(this).attr('id');
-        
-        work_id = work_id.split('-')[1];
-        
-        ajaxsaveworksatus(work_id,$(this).val());
-        
-    }); 
+          
+      }else{
+              var options = '<option value="">--</option>';
+        $.each(dataArray,
+          function(index, val) {
+            options += '<option value="'+val.id+'">' + val.name + '</option>';
+          }
+        );        
     
-    //請負元変更時処理
-    
-    $("[name=請負元]").change(function(){
-        
-        // $("[name=派遣先]").prop('disabled',false);
-        
-         var client_id =$(this).children(':selected').val();
-         
-         $("[name=派遣先]").children('option').remove();
-         var placeOptions = create_options(work_places[client_id]);
-         $("[name=派遣先]").append(placeOptions);
-  
-     });    
+      }
+      
 
-});
+      
 
-
-function create_options(dataArray){
-    if(dataArray == undefined || dataArray.length == 0){
-            var options = '<option value="">選択可能な派遣先がありません！</option>';
-
-        
-    }else{
-            var options = '<option value="">--</option>';
-      $.each(dataArray,
-        function(index, val) {
-          options += '<option value="'+val.id+'">' + val.name + '</option>';
-        }
-      );        
-  
-    }
-    
-
-    
-
-    return options;
-    
-}
-
-
-
+      return options;
+      
+  }
 
 
 
@@ -151,10 +148,10 @@ function create_options(dataArray){
 
 </script>
 <section class="content-header">
-<h1>
-作業一覧
-<small>登録されている作業データを管理します</small>
-</h1>
+  <h1>
+  作業一覧
+  <small>登録されている作業データを管理します</small>
+  </h1>
 </section>
 <section class="content voffset4">
  
@@ -257,105 +254,106 @@ function create_options(dataArray){
 </div> 
    
   <div class="equipment-table">
-  <table class="table table-bordered table-hover table-striped">
-      <thead>
-             <tr class="bg-olive">
-                <th ><?= __('受注No') ?></th>
-                <th ><?= __('実施期間') ?></th>
-                <th ><?= __('請負元') ?></th>
-                <th ><?= __('派遣先') ?></th>
-                <th ><?= __('業務内容') ?></th>
-                <th ><?= __('部位　種別') ?></th>
-                <th ><?= __('装置') ?></th>  
-                <th ><?= __('スタッフ') ?></th> 
-                <th ><?= __('技師') ?></th>                                               
-                <th ><?= __('作業完了') ?></th>
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+              <tr class="bg-olive">
+                  <th ><?= __('受注No') ?></th>
+                  <th ><?= __('実施期間') ?></th>
+                  <th ><?= __('請負元') ?></th>
+                  <th ><?= __('派遣先') ?></th>
+                  <th ><?= __('業務内容') ?></th>
+                  <th ><?= __('部位　種別') ?></th>
+                  <th ><?= __('装置') ?></th>  
+                  <th ><?= __('スタッフ') ?></th> 
+                  <th ><?= __('技師') ?></th>                                               
+                  <th ><?= __('作業完了') ?></th>
 
-                <th  class="actions"><?= __('操作') ?></th>
-            </tr>         
-      </thead>
-      <tbody>
-             <?php foreach ($works as $work): ?>
-            <tr>
-                <td><?= h($work->order->order_no) ?></td>
-                <td><?= h($work->order->start_date . " ~ " . $work->order->end_date) ?></td>
-                <td><?php
-                if(!empty($work->order->client)){
-                    echo $work->order->client->name;
-                }
-                 ?></td>
-                <td><?php
-                if(!empty($work->order->work_place)){
-                    echo $work->order->work_place->name;
-                }
-                 ?></td>
-                <td><?php
-                if(!empty($work->order->work_content_id)){
-                    echo $workContents[$work->order->work_content_id];
-                }
-                 ?></td> 
-                <td><?= h($work->order->capturing_region->name . " " . $work->order->film_size->name)
-                 ?> </td>
-                <td><?php
-                $equipments = [];
-                $index = ['A','B','C','D','E'];
-                for ($i=1; $i <= 5; $i++) {
-                    $equipmenti =  'equipment'.$i;
-                    if($work->has($equipmenti)){
-                        $equipments[] = $work->$equipmenti->equipment_type->name . $work->$equipmenti->equipment_no . "号";
-                    }                    
-                    
-                }
+                  <th  class="actions"><?= __('操作') ?></th>
+              </tr>         
+        </thead>
+        <tbody>
+              <?php foreach ($works as $work): ?>
+              <tr>
+                  <td><?= h($work->order->order_no) ?></td>
+                  <td><?= h($work->order->start_date . " ~ " . $work->order->end_date) ?></td>
+                  <td><?php
+                  if(!empty($work->order->client)){
+                      echo $work->order->client->name;
+                  }
+                  ?></td>
+                  <td><?php
+                  if(!empty($work->order->work_place)){
+                      echo $work->order->work_place->name;
+                  }
+                  ?></td>
+                  <td><?php
+                  if(!empty($work->order->work_content_id)){
+                      echo $workContents[$work->order->work_content_id];
+                  }
+                  ?></td> 
+                  <td><?= h($work->order->capturing_region->name . " " . $work->order->film_size->name)
+                  ?> </td>
+                  <td><?php
+                  $equipments = [];
+                  $index = ['A','B','C','D','E'];
+                  for ($i=1; $i <= 5; $i++) {
+                      $equipmenti =  'equipment'.$i;
+                      if($work->has($equipmenti)){
+                          $equipments[] = $work->$equipmenti->equipment_type->name . $work->$equipmenti->equipment_no . "号";
+                      }                    
+                      
+                  }
+              
+                  //$equipments = [$work->equipmentA->name,$work->equipmentB->name,$work->equipmentC->name,$work->equipmentD->name,$work->equipmentE->name];
+                  echo h(implode(" , ", $equipments)); ?></td>  
+                  <td><?php
+                  $staffs = [];
+                  for ($i=1; $i < 11; $i++) {
+                      $staffi = "staff" .$i; 
+                      if($work->has($staffi)){
+                          $staffs[] = $work->$staffi->name;
+                      }                    
+                      
+                  }
+                  echo h(implode(" , ", $staffs)); ?></td>    
+                  <td><?php
+                  $technician = [];
+                  for ($i=1; $i < 11; $i++) {
+                      $techniciani = "technician" . $i; 
+                      if($work->has($techniciani)){
+                          $technician[] = $work->$techniciani->name;
+                      }
+                      
+                      
+                  }
+                  echo h(implode(" , ", $technician)); ?></td>                                                
+                  <td><?php
+                      echo $this->Form->input('done_' . $work->id,[
+                      'options' =>['0' => '未完了','1' => '完了'],
+                      //'empty' => '--',
+                      'class' => 'done',
+                      'label' => false,
+                  'value' => $work->done
+                      ]);
+                  ?></td>                
+
+
+                  <td class="actions text-center">
+                      <div class="btn-group">
+                      <?= $this->Html->link(__('　閲覧'), ['action' => 'view', $work->id],
+                      ['class' => 'btn btn-info glyphicon glyphicon-info-sign']) ?>
+                      <?= $this->Html->link(__('　編集'), ['action' => 'edit', $work->id],
+                      ['class' => 'btn btn-success glyphicon glyphicon-pencil']) ?>
+                      </div>
+                  </td>
+              </tr>
+              <?php endforeach; ?>         
             
-                //$equipments = [$work->equipmentA->name,$work->equipmentB->name,$work->equipmentC->name,$work->equipmentD->name,$work->equipmentE->name];
-                echo h(implode(" , ", $equipments)); ?></td>  
-                <td><?php
-                $staffs = [];
-                for ($i=1; $i < 11; $i++) {
-                    $staffi = "staff" .$i; 
-                    if($work->has($staffi)){
-                        $staffs[] = $work->$staffi->name;
-                    }                    
-                    
-                }
-                echo h(implode(" , ", $staffs)); ?></td>    
-                <td><?php
-                $technician = [];
-                for ($i=1; $i < 11; $i++) {
-                    $techniciani = "technician" . $i; 
-                    if($work->has($techniciani)){
-                        $technician[] = $work->$techniciani->name;
-                    }
-                    
-                    
-                }
-                echo h(implode(" , ", $technician)); ?></td>                                                
-                <td><?php
-                    echo $this->Form->input('done_' . $work->id,[
-                    'options' =>['0' => '未完了','1' => '完了'],
-                    //'empty' => '--',
-                    'class' => 'done',
-                    'label' => false,
-                'value' => $work->done
-                    ]);
-                 ?></td>                
-
-
-                <td class="actions text-center">
-                    <div class="btn-group">
-                    <?= $this->Html->link(__('　閲覧'), ['action' => 'view', $work->id],
-                    ['class' => 'btn btn-info glyphicon glyphicon-info-sign']) ?>
-                    <?= $this->Html->link(__('　編集'), ['action' => 'edit', $work->id],
-                    ['class' => 'btn btn-success glyphicon glyphicon-pencil']) ?>
-                    </div>
-                </td>
-            </tr>
-            <?php endforeach; ?>         
-          
-      </tbody>      
-      
-  </table>
-  <ul class="pagination">
+        </tbody>      
+        
+    </table>
+    <div class="paginator">
+    <ul class="pagination">
       <?php
         $this->Paginator->options(['url'=> ['action'=>'index','usePaging'=>1]]);            
       ?>    

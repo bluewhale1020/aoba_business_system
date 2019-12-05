@@ -47,9 +47,11 @@ class OrdersController extends AppController
             if (!empty($this->request->data['派遣先'])) {
                 $conditions[] = ['work_place_id' => $this->request->data['派遣先']];
             }
-            
-            // debug($conditions);
 
+
+        }else{
+            //今月以降３か月のデータを取得
+            list($this->request->data, $conditions) = $this->Date->setIndexDefaultDateRange($this->request->data,[]);          
         }
 
 
@@ -63,7 +65,7 @@ class OrdersController extends AppController
             'paramType' => 'querystring'                    
         ]; 
         if(!empty($conditions)){
-            //debug($conditions);
+
             $this->paginate['conditions'] = $conditions;        
         }           
 

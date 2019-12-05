@@ -51,31 +51,13 @@ class WorksController extends AppController
                 $conditions[] = ['Orders.work_place_id' => $this->request->data['派遣先']];
                               
             }            
-            
-                // debug($conditions);
-
-            //  $works = $this->Works->find()
-            // ->contain(['Orders'=>['Clients','WorkPlaces',  'WorkContents', 'CapturingRegions','FilmSizes'],
-            // 'Equipment1'=>['EquipmentTypes'],'Equipment2'=>['EquipmentTypes'],'Equipment3'=>['EquipmentTypes'],
-            // 'Equipment4'=>['EquipmentTypes'],'Equipment5'=>['EquipmentTypes']
-            // ,'Staff1','Staff2','Staff3',
-            // 'Technician1','Technician2','Technician3'])
-            //     ->where($conditions)
-            //     ->order(['Orders.order_no' => 'ASC'])
-            //     ->all(); 
                              
           
+        }else{
+            //今月以降３か月のデータを取得
+            list($this->request->data, $conditions) = $this->Date->setIndexDefaultDateRange($this->request->data,[]);
         }
-        // else{
-        //      $works = $this->Works->find()
-        //     ->contain(['Orders'=>['Clients','WorkPlaces',  'WorkContents', 'CapturingRegions','FilmSizes'],
-        //     'Equipment1'=>['EquipmentTypes'],'Equipment2'=>['EquipmentTypes'],'Equipment3'=>['EquipmentTypes'],
-        //     'Equipment4'=>['EquipmentTypes'],'Equipment5'=>['EquipmentTypes']
-        //     ,'Staff1','Staff2','Staff3',
-        //     'Technician1','Technician2','Technician3'])
-        //     ->order(['Orders.order_no' => 'ASC'])
-        //     ->all();          
-        // }
+
         
         $this->paginate = [
             'limit' => 10,
@@ -91,7 +73,7 @@ class WorksController extends AppController
             'paramType' => 'querystring'                    
         ]; 
         if(!empty($conditions)){
-            //debug($conditions);
+
             $this->paginate['conditions'] = $conditions;        
         }           
 
@@ -107,7 +89,7 @@ class WorksController extends AppController
           })->limit(200);
       
         $sortedOptions = $this->Orders->WorkPlaces->getSortedOptions();
-        //    debug($sortedOptions);
+
         $workContents = $this->Orders->WorkContents->find('list', ['limit' => 200])->toArray();
 
         $this->set(compact('works','clients','sortedOptions','workContents'));

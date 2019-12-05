@@ -145,9 +145,23 @@ class BusinessPartnersTable extends Table
         // //    ->requirePresence('rght', 'create')
             // ->notEmpty('rght');
 
+            $validator->add('parent_id', 'checkIdenticalNames', [
+                'rule' => function ($data, $provider) {
+                    if(!empty($provider['data']['id'])){
+                        if ($data != $provider['data']['id']) {
+                            return true;
+                        }
+                        return '請負元と取引先を同じにできません。';
+
+                    }else{
+                        return true;
+                    }
+                }
+            ])->allowEmpty('parent_id');
+
         // 特定休日[20xx/xx/xx,20xx/xx/xx,..]の書式をチェック
         // 2019/10/01,2019/10/02,2019/10/03
-        $validator->add('specific_holidays', 'myRule', [
+        $validator->add('specific_holidays', 'checkHolidayDateFormat', [
             'rule' => function ($data, $provider) {
                 $result = true;
 
