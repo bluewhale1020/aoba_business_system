@@ -28,7 +28,7 @@ function loadnotifications(){
         
         },
         error:function(XHR, status, errorThrown){
-            alert(status);
+            // alert(status);
         }
         
         });
