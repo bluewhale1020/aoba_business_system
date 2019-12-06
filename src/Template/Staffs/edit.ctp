@@ -119,7 +119,7 @@ function loadDataFile(zipcode)
 <small>スタッフの登録情報を編集します</small>
 </h1>
 </section>
-<section class="content voffset4">
+<section class="content voffset4 clearfix">
 
     <?= $this->Form->create($staff,[
     'class' => 'form-horizontal'

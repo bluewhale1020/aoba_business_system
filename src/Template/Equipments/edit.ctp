@@ -53,7 +53,7 @@ $('#install-date').daterangepicker(picker_option, (start, end, label)=> {
 <small>登録済の装置の情報を更新します</small>
 </h1>
 </section>
-<section class="content voffset4">
+<section class="content voffset4 clearfix">
 
     <?= $this->Form->create($equipment,[
     'class' => 'form-horizontal'

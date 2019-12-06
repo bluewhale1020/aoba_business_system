@@ -159,7 +159,7 @@ function loadDataFile(zipcode)
 <small>業務取引先を新規登録します</small>
 </h1>
 </section>
-<section class="content voffset4">
+<section class="content voffset4 clearfix">
 
     <?= $this->Form->create($businessPartner,[
     'class' => 'form-horizontal'

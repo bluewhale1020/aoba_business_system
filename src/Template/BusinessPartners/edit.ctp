@@ -158,7 +158,7 @@ function loadDataFile(zipcode)
 <small>取引先情報を編集します</small>
 </h1>
 </section>
-<section class="content voffset4">
+<section class="content voffset4 clearfix">
 
     <?= $this->Form->create($businessPartner,[
     'class' => 'form-horizontal'
