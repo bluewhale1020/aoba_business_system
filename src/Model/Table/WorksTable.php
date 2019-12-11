@@ -57,6 +57,8 @@ class WorksTable extends Table
     {
         parent::initialize($config);
 
+        $this->addBehavior('Log');
+        
         $this->table('works');
         $this->displayField('id');
         $this->primaryKey('id');

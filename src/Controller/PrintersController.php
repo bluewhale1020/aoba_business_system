@@ -1400,4 +1400,105 @@ class PrintersController extends AppController {
     }
 
 
+    /**
+     * ログデータをCSVで出力する
+     * 
+     */
+    public function printLogData()
+    {
+        $this->EventLogs = TableRegistry::get('EventLogs');
+
+        // 条件（作成期間・ユーザーID・アクション）で検索したログデータを
+        // テーブルから取得               
+        $conditions = [];
+        if($this->request->is('post')){
+            //データを検索する
+            
+            //user id
+            if(!empty($this->request->data['ユーザー'])){
+                $conditions[] = ['EventLogs.user_id '=> $this->request->data['ユーザー']]; 
+            }           
+            //期間
+            if(!empty($this->request->data['date_range'])){
+                $conditions[] = ['EventLogs.created >=' => $this->request->data['start_date']]; 
+                  $conditions[] = ['EventLogs.created <=' => $this->request->data['end_date'].' 23:59:59'];              
+            }
+                        
+            //action_type
+            if(!empty($this->request->data['アクション'])){
+                $conditions[] = ['EventLogs.action_type' => $this->request->data['アクション']]; 
+               
+            }           
+                             
+          
+        }
+        $eventLogs = $this->EventLogs->find()->contain(['Users'])->where($conditions)->order(['EventLogs.created'=>'DESC'])->all();       
+
+        $columns = $this->EventLogs->schema()->columns();
+
+
+        // CSVフォーマットでログデータを整理する
+        
+        // ログデータをCSV出力する
+
+        // 保存ファイルパス作成
+        $today = new \DateTime();
+        $filename = $today->format("y_m_d_") . 'eventlog.csv';
+
+        $uploadDir = realpath( TMP );
+        $uploadDir .= DS . 'csvs' . DS;
+        $file_path = $uploadDir.$filename;    
+            //ヘッダー
+        $data_array[] = $columns;
+        if(!empty($eventLogs)){ 
+            foreach ($eventLogs as $key => $oneRecord) {
+                $rec_array = [
+                    $oneRecord->id,
+                    $oneRecord->created->format("Y/m/d H:i:s"),
+                    $oneRecord->event,
+                    $oneRecord->action_type,
+                    $oneRecord->table_name,
+                    $oneRecord->record_id,
+                    $oneRecord->user->username,
+                    $oneRecord->remote_addr,
+                    $this->format_modified_value_object($oneRecord->old_val),
+                    $this->format_modified_value_object($oneRecord->new_val),
+                ];
+
+                // debug($rec_array);die();
+                $data_array[] = $rec_array;
+            }
+        } 
+        
+        mb_convert_variables('SJIS-win','UTF-8',$data_array);
+        $fp = fopen($file_path, 'w');
+
+        foreach ($data_array as $line) {
+            fputcsv($fp, $line);
+        }
+            
+        fclose($fp);
+
+        // ファイルに書き込む
+        // $str_data = implode(",", $data_array);
+        // file_put_contents($file_path, mb_convert_encoding($str_data, "SJIS"));
+   
+        //////////////////////////////// csv 出力            
+           
+       $this -> set('filename', $filename);
+    
+       $this -> set('path', $file_path);
+
+       $this->layout = false;            
+   
+       $this -> render("print_log_data");              
+    }
+
+    protected function format_modified_value_object($value)
+    {
+        $value_obj = unserialize($value);
+
+        return  print_r($value_obj,true);
+
+    }
 }

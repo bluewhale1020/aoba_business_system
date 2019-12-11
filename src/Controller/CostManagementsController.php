@@ -90,7 +90,7 @@ class CostManagementsController extends AppController
             return $exp
               ->eq('Clients.is_work_place', 1)
               ->isNull('Clients.parent_id');
-        })->limit(200);        
+        });        
 
         $sortedOptions = $this->Orders->WorkPlaces->getSortedOptions();
 

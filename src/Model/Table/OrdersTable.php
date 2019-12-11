@@ -39,7 +39,8 @@ class OrdersTable extends Table
     public function initialize(array $config)
     {
         parent::initialize($config);
-        
+
+        $this->addBehavior('Log');
         
         $this->table('orders');
         $this->displayField('id');

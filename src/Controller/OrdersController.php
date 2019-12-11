@@ -77,7 +77,7 @@ class OrdersController extends AppController
             return $exp
               ->eq('Clients.is_work_place', 1)
               ->isNull('Clients.parent_id');
-        })->limit(200);
+        });
 
         $sortedOptions = $this->Orders->WorkPlaces->getSortedOptions();
         
@@ -172,7 +172,7 @@ class OrdersController extends AppController
             return $exp
               ->eq('Clients.is_work_place', 1)
               ->isNull('Clients.parent_id');
-        })->limit(200);
+        });
 
         $sortedOptions = $this->Orders->WorkPlaces->getSortedOptions();        
 
@@ -237,7 +237,7 @@ class OrdersController extends AppController
             return $exp
               ->eq('Clients.is_work_place', 1)
               ->isNull('Clients.parent_id');
-        })->limit(200);
+        });
         $workPlaceOptions = $this->Orders->WorkPlaces->find('all')->where(['WorkPlaces.is_work_place' => 1])->limit(200)->toArray();
         
         $sortedOptions = [];

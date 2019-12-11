@@ -127,7 +127,7 @@ class BusinessPartnersController extends AppController
         }
         
         $parentBusinessPartners = $this->BusinessPartners->ParentBusinessPartners->find('list')
-            ->where(['is_client' => 1])->limit(200);        
+            ->where(['is_client' => 1]);        
         $this->set(compact('businessPartner','parentBusinessPartners'));
         $this->set('_serialize', ['businessPartner']);
     }
@@ -159,7 +159,7 @@ class BusinessPartnersController extends AppController
             }
         }
         $parentBusinessPartners = $this->BusinessPartners->ParentBusinessPartners->find('list')
-            ->where(['is_client' => 1])->limit(200);       
+            ->where(['is_client' => 1]);       
         $this->set(compact('businessPartner','parentBusinessPartners'));
         $this->set('_serialize', ['businessPartner']);
     }

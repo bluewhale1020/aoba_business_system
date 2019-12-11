@@ -4,7 +4,8 @@ $this->Html->css(
     'AdminLTE./bower_components/bootstrap-daterangepicker/daterangepicker',
     'jquery-clockpicker.min',
     'jquery-ui',
-    'theme'
+    'theme',
+    'customcombobox'
   ],
     ['block' => 'css']
 );
@@ -13,7 +14,8 @@ $this->Html->script(
     [
   'AdminLTE./bower_components/bootstrap-daterangepicker/daterangepicker',
   'jquery-clockpicker.min',
-  'jquery-ui'
+  'jquery-ui',
+  'combobox'
 ],
     ['block' => 'script']
 );
@@ -28,6 +30,8 @@ $this->Html->script(
 
 
   $(document).ready(function() {
+
+    $( "#client-id" ).combobox();
 
     // ロケールを設定
     moment.locale('ja');

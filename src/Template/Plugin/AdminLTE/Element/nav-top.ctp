@@ -90,6 +90,12 @@
                   <i class="fa fa-users text-aqua"></i> ユーザー一覧
                 </a>
               </li>
+              <li>
+                <a href="<?php 
+                echo $this->Url->build(['controller'=>'event_logs', 'action'=>'index']); ?>">
+                  <i class="fa fa-book text-aqua"></i> イベントログ
+                </a>
+              </li>
             </ul>
           </li>
         </ul>

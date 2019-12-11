@@ -3,7 +3,7 @@ namespace App\Controller;
 
 use App\Controller\AppController;
 use Cake\Event\Event;
-
+use Cake\ORM\TableRegistry;
 /**
  * Users Controller
  *
@@ -86,6 +86,8 @@ class UsersController extends AppController
          
                 if ($user) { // 該当するユーザーがいればログイン処理
                     $this->Auth->setUser($user);
+                    $this->EventLogs = TableRegistry::get('EventLogs');
+                    $this->EventLogs->loginOut($user['id'],'login');
                     return $this->redirect($this->Auth->redirectUrl());
                 } else { // 該当するユーザーがいなければエラー
                     $this->Flash->error(__('ユーザー名かパスワードが間違っています！'));
@@ -106,7 +108,8 @@ class UsersController extends AppController
      */
     public function logout()
     {
-
+        $this->EventLogs = TableRegistry::get('EventLogs');
+        $this->EventLogs->loginOut($this->Auth->user('id'),'logout');
         // $this->request->session()->destroy(); // セッションの破棄
         return $this->redirect($this->Auth->logout()); // ログアウト処理
     }
@@ -151,7 +154,7 @@ class UsersController extends AppController
         // debug($conditions);
         //$queryを渡してデータを取得
         $users = $this->paginate($query);        
-        // $users = $this->paginate($this->Users);
+
 
         $this->set(compact('users'));
     }
@@ -165,11 +168,31 @@ class UsersController extends AppController
      */
     public function view($id = null)
     {
-        $user = $this->Users->get($id, [
-            'contain' => []
-        ]);
+        $user = $this->Users->find()->where(['id'=>$id])->first();
 
-        $this->set('user', $user);
+        if($user){
+            // ユーザーIDから、関連するログデータを取得
+            $this->EventLogs = TableRegistry::get('EventLogs');
+            $this->paginate = [
+                'limit' => 10,
+                'contain'=>['Users'],
+                'conditions'=>['user_id'=>$id],
+                'order' => [
+                    'created' => 'DESC',
+                ],                
+                'paramType' => 'querystring'                    
+            ];    
+         
+            $eventLogs = $this->paginate($this->EventLogs);
+    
+    
+            $this->set(compact('user','eventLogs'));
+
+        }else{
+            $this->Flash->error(__('ID:'.$id.'のユーザー情報が見つかりません。'));
+            return $this->redirect(['action' => 'index']);
+        }
+
     }
 
 

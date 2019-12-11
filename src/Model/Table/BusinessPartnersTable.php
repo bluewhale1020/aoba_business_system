@@ -206,7 +206,7 @@ class BusinessPartnersTable extends Table
      * @return array $sortedOptions [請負元id=>派遣先]リスト
      */
     public function getSortedOptions() {
-        $workPlaceOptions = $this->find('all')->where(['WorkPlaces.is_work_place' => 1])->limit(200)->toArray();
+        $workPlaceOptions = $this->find('all')->where(['WorkPlaces.is_work_place' => 1])->toArray();
 
         return $this->sortOptions($workPlaceOptions);
 

@@ -33,6 +33,8 @@ class UsersTable extends Table
     {
         parent::initialize($config);
 
+        $this->addBehavior('Log');
+        
         $this->table('users');
         $this->displayField('id');
         $this->primaryKey('id');

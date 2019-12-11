@@ -33,6 +33,8 @@ class BillsTable extends Table
     {
         parent::initialize($config);
 
+        $this->addBehavior('Log');    
+
         $this->table('bills');
         $this->displayField('id');
         $this->primaryKey('id');

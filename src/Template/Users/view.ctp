@@ -7,6 +7,7 @@
 <!-- Main content -->
 
 <section class="content voffset4 ">
+<div class="row">
  <div class="col-md-7">  
 
 
@@ -58,5 +59,82 @@
     
    </div>
    
-   </div> 
+  </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+    <div class="box box-info">
+        <div class="box-header with-border">
+            <h3 class="box-title">ログ一覧</h3>
+            <div class="box-tools pull-right">
+            <!-- Buttons, labels, and many other things can be placed here! -->
+            <!-- Here is a label for example -->
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+
+            </div><!-- /.box-tools -->
+        </div><!-- /.box-header -->
+        <div class="box-body"> 
+        
+        <div class="eventlog-table">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr class="bg-navy disabled">
+                    <th ><?= __('id') ?></th>
+                    <th ><?= __('作成日') ?></th>
+                    <th ><?= __('イベント') ?></th>
+                    <th ><?= __('テーブル名') ?></th>
+                    <th ><?= __('レコードID') ?></th>
+                    <th ><?= __('IPアドレス') ?></th>
+                </tr>         
+            </thead>
+            <tbody>
+                <?php foreach ($eventLogs as $eventLog): ?>
+                <tr>
+                    <td><?= $this->Number->format($eventLog->id) ?></td>
+                    <td><?= h($eventLog->created) ?></td>
+                    <td><?= h($eventLog->event) ?></td>
+                    <td><?= h($eventLog->table_name) ?></td>
+                    <td>
+                        <?php 
+                        
+                        if (in_array($eventLog->action_type,['login','logout'])) {         
+
+                        }else if($eventLog->event != "delete"){
+                            echo $this->Html->link($eventLog->record_id,[
+                            'controller'=>$eventLog->table_name, 'action' => 'view',$eventLog->record_id
+                        ]);                        
+                        }else{
+                            echo $eventLog->record_id;
+                        }
+                    ?></td>
+                    <td><?= h($eventLog->remote_addr) ?></td>
+                </tr>
+                <?php endforeach; ?> 
+            </tbody>      
+            
+        </table>      
+        <div class="paginator">
+            <ul class="pagination">
+                <?php
+                    $this->Paginator->options(['url'=> ['action'=>'view',$user->id,'usePaging'=>1]]);            
+                ?>    
+                <?= $this->Paginator->first('<< ' . __('最初')) ?>
+                <?= $this->Paginator->prev('< ' . __('前')) ?>
+                <?= $this->Paginator->numbers() ?>
+                <?= $this->Paginator->next(__('次') . ' >') ?>
+                <?= $this->Paginator->last(__('最後') . ' >>') ?>
+            </ul>
+            <p><?= $this->Paginator->counter(['format' => __('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')]) ?></p>
+        </div>
+
+        </div>
+        </div><!-- /.box-body -->
+        <div class="box-footer">
+            
+        </div><!-- box-footer -->
+        </div><!-- /.box --> 
+    </div>
+</div>
+
 </section>

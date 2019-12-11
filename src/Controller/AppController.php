@@ -119,7 +119,9 @@ class AppController extends Controller
 
         if(!$isAuth and $this->request->getParam('action') != 'login'){
             $this->Flash->error(__('セッション期間が過ぎています。再度ログインしてください。'));
-        }        
+        } 
+
+        Configure::write('user_id',$isAuth['id']);
         
         return parent::beforeFilter($event);
     }
