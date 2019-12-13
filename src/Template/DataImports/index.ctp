@@ -123,7 +123,7 @@ $(document).ready(function(){
         multiselect: true,
         caption: 'Excelデータグリッド',
         shrinkToFit :false,
-        rowNum:400
+        rowNum:100
         ,pager:"#pager"	
 
     }).hideCol(['id']);///////＜－jqgridの終わり
