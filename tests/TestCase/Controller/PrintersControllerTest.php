@@ -34,6 +34,8 @@ class PrintersControllerTest extends TestCase
         'app.FilmSizes',
         'app.Works',
         'app.EquipmentTypes',
+        'app.Users',
+        'app.EventLogs',
     ];
 
     protected function setUserSession()
@@ -247,4 +249,36 @@ class PrintersControllerTest extends TestCase
         $this->assertTemplate('print_account_receivable');
         $this->assertResponseContains("xml");
     }
+
+    /**
+     * Test printLogData method
+     *
+     * @return void
+     */
+    public function testPrintLogData()
+    {
+        $token = 'my-csrf-token';
+        $this->cookie('csrfToken', $token);
+
+        $this->configRequest([
+            'headers' => [
+                'X-CSRF-Token' => $token,
+            ],
+        ]);        
+        $filename = (new \DateTime())->format("y_m_d_") . 'eventlog.csv';
+        $expected = TMP.'csvs'. DS . $filename;
+
+        $data = [];        
+
+        $this->post('/Printers/printLogData', $data);
+        $this->assertResponseCode(200);        
+ 
+        $this->assertEquals($filename,$this->viewVariable('filename'));         
+        $this->assertEquals($expected,$this->viewVariable('path'));         
+        $this->assertTemplate('print_log_data');
+ 
+        $this->assertResponseContains("id,created,event,action_type,table_name,record_id,user_id,remote_addr,old_val,new_val");
+
+    }
+
 }

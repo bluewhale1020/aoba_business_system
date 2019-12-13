@@ -1428,10 +1428,11 @@ class PrintersController extends AppController {
             if(!empty($this->request->data['アクション'])){
                 $conditions[] = ['EventLogs.action_type' => $this->request->data['アクション']]; 
                
-            }           
-                             
+            }               
           
         }
+        
+        // debug($conditions);
         $eventLogs = $this->EventLogs->find()->contain(['Users'])->where($conditions)->order(['EventLogs.created'=>'DESC'])->all();       
 
         $columns = $this->EventLogs->schema()->columns();

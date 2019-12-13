@@ -50,7 +50,7 @@ function printLogData (){
 
    var Url = "/aoba_business_system/Printers/printLogData";
     //urlはプロジェクト名/コントローラー名アンダーライン型/アクション名小文字
-
+  // alert(JSON.stringify(data));
   jqueryPost(Url, "Post", data);
 
 }
@@ -60,10 +60,16 @@ function get_form_data()
   var form = $("#search_form");
   var data = {};
   form.find('input').each(function(idx,elem){
-    if(elem.getAttribute("name") != "_method"){
-        data[elem.getAttribute("name")] = elem.getAttribute("value");
+    var elemObj = $(elem);
+    if(elemObj.attr("name") != "_method"){
+        data[elemObj.attr("name")] = elemObj.val();
 
     }
+  });
+  form.find('select').each(function(idx,elem){
+    var elemObj = $(elem);    
+    data[elemObj.attr("name")] = elemObj.val();
+
   });
 
   return data;

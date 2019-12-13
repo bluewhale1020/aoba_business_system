@@ -5,6 +5,9 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use ArrayObject;
+use Cake\Datasource\EntityInterface;
+use Cake\Event\Event;
 
 /**
  * EventLogs Model
@@ -25,6 +28,19 @@ use Cake\Validation\Validator;
  */
 class EventLogsTable extends Table
 {
+
+    /**
+     * ログデータ上限
+     * @var integer
+     */
+    public $max_size = 1000;
+
+    /**
+     * ログデータ削除基準日
+     * @var integer
+     */
+    public $date_before = 60;
+
     /**
      * Initialize method
      *
@@ -139,5 +155,24 @@ class EventLogsTable extends Table
         return $this->save($newLog);
 
     }
+
+
+    /**
+     * beforeSave method
+     * 上限に達したら、古いレコード(削除基準日前)を削除
+     */ 
+    public function beforeSave(Event $event, EntityInterface $entity, ArrayObject $options){
+        
+        $count = $this->find()->count();
+        
+        if($count > $this->max_size){
+            $currentDate = new \DateTime();
+            $currentDate->modify("-{$this->date_before} days");            
+        
+            $this->deleteAll(['created <'=>$currentDate]);       
+        }
+    
+        return true;
+    }    
 
 }

@@ -23,9 +23,11 @@ class LogBehavior extends Behavior
      */
     protected $_defaultConfig = [];
 
+   
 
     public function afterSave(Event $event, EntityInterface $entity, ArrayObject $options)
     {
+ 
         // テーブルオブジェクトを取得
         // テーブル名を取得
         $table = $event->subject();
@@ -114,7 +116,7 @@ class LogBehavior extends Behavior
     protected function saveLog($data)
     {
         $logTable = TableRegistry::get('EventLogs');
-
+        // debug($data);
         $newLog = $logTable->newEntity();
 
         $newLog = $logTable->patchEntity($newLog,$data);

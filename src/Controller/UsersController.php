@@ -128,27 +128,14 @@ class UsersController extends AppController
         $query = $this->Users->find();
         if($this->request->is('post') or !empty($this->request->data)){
             //データを検索する
-            // $conditions = [];
-             
-            
 
             //カテゴリ名
             if(!empty($this->request->data['table_search'])){
                 $query->where(['username like' => '%' . $this->request->data['table_search'] . '%'])
-                ->orWhere(['formal_name like' => '%' . $this->request->data['table_search'] . '%']);
-                // $conditions[] = ['username like' => '%' . $this->request->data['table_search'] . '%']; 
-                // $conditions[] = ["or"=>['formal_name like' => '%' . $this->request->data['table_search'] . '%']];
-            
+                ->orWhere(['formal_name like' => '%' . $this->request->data['table_search'] . '%']);            
             }
          
-            
-            // if(!empty($conditions)){
-            //     //debug($conditions);
-            //         $this->paginate = [
-            //             'conditions' => $conditions
-            //         ]; 
-            
-            // }
+
 
         }         
         // debug($conditions);
@@ -253,10 +240,11 @@ class UsersController extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         $user = $this->Users->get($id);
+        $username = $user->username;
         if ($this->Users->delete($user)) {
-            $this->Flash->success(__('The {0} has been deleted.', 'User'));
+            $this->Flash->success(__('The {0} has been deleted.', $username));
         } else {
-            $this->Flash->error(__('The {0} could not be deleted. Please, try again.', 'User'));
+            $this->Flash->error(__('The {0} could not be deleted. Please, try again.', $username));
         }
 
         return $this->redirect(['action' => 'index']);
