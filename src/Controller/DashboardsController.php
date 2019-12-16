@@ -166,8 +166,8 @@ class DashboardsController  extends AppController
                     'id' => $event->works[0]->id,
                     'title' => $event->work_place->name,
                     // 'description' => $event->description,
-                    'start' => $event->start_date.((!empty($event->start_time) ? " ".explode(' ',$event->start_time)[1]  : " 00:00")),
-                    'end' => $event->end_date.((!empty($event->end_time) ? " ".explode(' ',$event->end_time)[1] : " 23:59")),
+                    'start' => $event->start_date->format("Y-m-d").((!empty($event->start_time) ? " ".$event->start_time->format("H:i:s")  : " 00:00")),
+                    'end' => $event->end_date->format("Y-m-d").((!empty($event->end_time) ? " ".$event->end_time->format("H:i:s") : " 23:59")),
                     'color' => $color,
                     // 'textColor' => $event->calendar_text_color
                 ];

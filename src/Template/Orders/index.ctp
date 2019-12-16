@@ -278,7 +278,7 @@ echo $this->Html->link(' 新規受注',[
              <?php foreach ($orders as $order): ?>
             <tr>
                 <td><?= h($order->order_no) ?></td>
-                <td><?= h($order->start_date . " ~ " . $order->end_date) ?></td>
+                <td><?= h($order->start_date->format("Y/m/d") . " ~ " . $order->end_date->format("Y-m-d")) ?></td>
                 <td><?php
                 if(!empty($order->client)){
                     echo $order->client->name;

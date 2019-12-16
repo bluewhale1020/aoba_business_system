@@ -80,7 +80,7 @@ class DateComponent extends Component
         if (!empty($week)) {
             $holidays = $this->getWeekdays($diffDays,$week, $firstWeekday);
         }
-        //debug($holidays);
+        // debug($holidays);debug($week);
         // 日本の祝日日数を算出
         if ($japaneseHolidayFlag) {
             $japaneseHolidays = $this->getHolidayList($start, $end, $week);
@@ -94,7 +94,7 @@ class DateComponent extends Component
             $holidays += $this->getGivenHolidays($start, $end, $week,$given_holidays);
 
         }    
-        // debug($givenHolidays);
+        // debug($given_holidays);
         return $holidays;
     }
     

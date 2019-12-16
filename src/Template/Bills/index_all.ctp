@@ -399,7 +399,7 @@ echo $this->Form->input('請求先',[
             <tr>
                   <td><?= $bill['bill_no'];   ?></td>
                   <td><?= $bill->business_partner->name;   ?></td>
-                <td><?= $bill['bill_sent_date']; ?></td> 
+                <td><?= $bill['bill_sent_date']->format("Y/m/d"); ?></td> 
                 <td id="description-<?=$bill['id']; ?>"><?php
                     $description = '';
                     if(!empty($bill['uncollectible'])){

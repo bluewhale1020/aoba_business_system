@@ -109,7 +109,7 @@ echo $this->Form->input('bill_id',['id' => 'bill-id','type' => 'hidden','value' 
              <?php foreach ($bill->orders as $order): ?>
             <tr>
                 <td><?= h($order->order_no) ?></td>
-                <td><?= h($order->start_date . " ~ " . $order->end_date) ?></td>
+                <td><?= h($order->start_date->format("Y/m/d") . " ~ " . $order->end_date->format("Y-m-d")) ?></td>
                 <td><?php
                 if($order->has('client')){
                     echo $order->client->name;
@@ -199,7 +199,7 @@ echo $this->Form->input('bill_id',['id' => 'bill-id','type' => 'hidden','value' 
     
 </div>
 </div><div class="col-md-5 voffset3">
-     <p class="text-right">送付日： <?= $bill->bill_sent_date; ?>&nbsp;&nbsp;No: <?=$bill->bill_no ?></p>
+     <p class="text-right">送付日： <?= $bill->bill_sent_date->format("Y/m/d"); ?>&nbsp;&nbsp;No: <?=$bill->bill_no ?></p>
  <div class="text-right box box-solid bg-gray-active">
     <div class="box-header with-border">
         <h3 class="box-title"><?=$mycompany->name; ?></h3>

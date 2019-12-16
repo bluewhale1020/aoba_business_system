@@ -201,7 +201,7 @@ function print_order_confirmation(){
     <div class="col-md-6">
 <div class="form-group clearfix">
     <?php   echo $this->Form->label('date_range','期間',['class'=>'col-md-4']); ?>
-    <span class="formData" class="col-md-8" id="date-range"><?php echo $order->start_date . " ~ " . $order->end_date; ?></span>
+    <span class="formData" class="col-md-8" id="date-range"><?php echo $order->start_date->format("Y/m/d") . " ~ " . $order->end_date->format("Y/m/d"); ?></span>
 </div>         
 <div class="form-group clearfix">
     <?php   echo $this->Form->label('time_range','時間',['class'=>'col-md-4']); ?>

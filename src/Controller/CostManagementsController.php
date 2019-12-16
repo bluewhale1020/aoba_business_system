@@ -124,12 +124,10 @@ class CostManagementsController extends AppController
                if(!empty($order->work_place->holiday_numbers) or $order->work_place->holiday_numbers === '0'){
                    $week = explode(",", $order->work_place->holiday_numbers);
                }
-               
-               $given_holidays = [$order->work_place->holiday1,$order->work_place->holiday2,$order->work_place->holiday3,
-           $order->work_place->holiday4,$order->work_place->holiday5,$order->work_place->holiday6,$order->work_place->holiday7];
+               $given_holidays = explode(",", $order->work_place->specific_holidays);
            }
           //$week = [0,4];
-            $holidayCount = $this->Date->getHolidayCount($order->start_date, $order->end_date, $week,$given_holidays,false);
+            $holidayCount = $this->Date->getHolidayCount($order->start_date->format("Y-m-d"), $order->end_date->format("Y-m-d"), $week,$given_holidays,false);
             //debug($week);
             $startDate = new \DateTime($order->start_date->format("Y-m-d"));
             $endDate = new \DateTime($order->end_date->format("Y-m-d"));            
@@ -186,7 +184,7 @@ class CostManagementsController extends AppController
            $order->work_place->holiday4,$order->work_place->holiday5,$order->work_place->holiday6,$order->work_place->holiday7];
            }
           //$week = [0,4];
-            $holidayCount = $this->Date->getHolidayCount($order->start_date, $order->end_date, $week,$given_holidays,false);
+            $holidayCount = $this->Date->getHolidayCount($order->start_date->format("Y-m-d"), $order->end_date->format("Y-m-d"), $week,$given_holidays,false);
             //debug($week);
             $startDate = new \DateTime($order->start_date->format("Y-m-d"));
             $endDate = new \DateTime($order->end_date->format("Y-m-d"));            

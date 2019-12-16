@@ -84,7 +84,7 @@ $('#due-date').daterangepicker(picker_option, (start, end, label)=> {
     // aspectRatio: 1.0,
     // timeFormat: 'HH:mm',
     displayEventTime:false,
-    timezone: 'Asia/Tokyo', 
+    // timezone: 'Asia/Tokyo', 
     events: function(start, end, timezone, callback) {
            // ***** ここでカレンダーデータ取得JSを呼ぶ *****
            setCalendarList(start.format('YYYY-MM-DD'), end.format('YYYY-MM-DD'), callback);
@@ -318,7 +318,7 @@ Dashboard
                           echo '<span class="label label-danger">請求待ち</span>';
                       }
                       ?></td>
-                      <td><?= h($order->start_date . " ~ " . $order->end_date) ?></td>
+                      <td><?= h($order->start_date->format("Y/m/d") . " ~ " . $order->end_date->format("Y/m/d")) ?></td>
                       <td><?php
                       if(!empty($order->client)){
                           echo $order->client->name;

@@ -539,7 +539,7 @@ echo $this->Form->input('date', array(
              <?php foreach ($orders as $order): ?>
             <tr>
                 <td><?= h($order->order_no) ?></td>
-                <td><?= h($order->start_date . " ~ " . $order->end_date) ?></td>
+                <td><?= h($order->start_date->format("Y/m/d") . " ~ " . $order->end_date->format("Y-m-d")) ?></td>
                 <td><?php
                 if($order->has('client')){
                     echo $order->client->name;
@@ -640,7 +640,7 @@ echo $this->Form->input('date', array(
              <?php foreach ($bills as $bill): ?>
             <tr>
                   <td><?= $bill['bill_no'];   ?></td>
-                <td><?= $bill['bill_sent_date']; ?></td> 
+                <td><?= $bill['bill_sent_date']->format("Y/m/d"); ?></td> 
                 <td id="description-<?=$bill['id']; ?>"><?php
                     $description = '';
                     if(!empty($bill['uncollectible'])){
@@ -799,7 +799,7 @@ echo $this->Form->input('date', array(
         
         </td>                
                 <td><?= h($order->order_no) ?></td>
-                <td><?= h($order->start_date . " ~ " . $order->end_date) ?></td>
+                <td><?= h($order->start_date->format("Y/m/d") . " ~ " . $order->end_date->format("Y-m-d")) ?></td>
                 <td><?php
                 if($order->has('client')){
                     echo $order->client->name;

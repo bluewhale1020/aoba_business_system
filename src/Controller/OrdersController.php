@@ -116,7 +116,7 @@ class OrdersController extends AppController
             $given_holidays = explode(",", $order->work_place->specific_holidays);
         }
 
-        $holidayCount = $this->Date->getHolidayCount($order->start_date, $order->end_date, $week, $given_holidays, false);
+        $holidayCount = $this->Date->getHolidayCount($order->start_date->format("Y-m-d"), $order->end_date->format("Y-m-d"), $week, $given_holidays, false);
 
         $startDate = new \DateTime($order->start_date->format("Y-m-d"));
         $endDate = new \DateTime($order->end_date->format("Y-m-d"));
@@ -210,7 +210,7 @@ class OrdersController extends AppController
         
         //実施期間データ作成
         if (!empty($order->start_date) and !empty($order->end_date)) {
-            $order->date_range = $order->start_date . " - " .$order->end_date;
+            $order->date_range = $order->start_date->format("Y-m-d") . " - " .$order->end_date->format("Y-m-d");
         } else {
             $order->date_range = '';
         }
@@ -328,7 +328,7 @@ class OrdersController extends AppController
                                         $order->work_place->holiday4,$order->work_place->holiday5,$order->work_place->holiday6,$order->work_place->holiday7];
                 }
                 //$week = [0,4];
-                $holidayCount = $this->Date->getHolidayCount($order->start_date, $order->end_date, $week, $given_holidays, false);
+                $holidayCount = $this->Date->getHolidayCount($order->start_date->format("Y-m-d"), $order->end_date->format("Y-m-d"), $week, $given_holidays, false);
                 //debug($week);
                 $startDate = new \DateTime($order->start_date->format("Y-m-d"));
                 $endDate = new \DateTime($order->end_date->format("Y-m-d"));

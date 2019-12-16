@@ -238,7 +238,7 @@ class PrintersController extends AppController {
         
 
         // 送付日
-        $sheet->setCellValue( "W1",  $bill->bill_sent_date );
+        $sheet->setCellValue( "W1",  $bill->bill_sent_date->format("Y/m/d") );
         
         
        //自社情報印字
@@ -425,7 +425,7 @@ class PrintersController extends AppController {
           
       if($bill){
         // 送付日
-        $sheet->setCellValue( "W1",  $bill->bill_sent_date );           
+        $sheet->setCellValue( "W1",  $bill->bill_sent_date->format("Y/m/d") );           
         // 請求先
         if($bill->has('business_partner')){
             $sheet -> setCellValue("A4", $bill->business_partner->name);
@@ -451,7 +451,7 @@ class PrintersController extends AppController {
         
         
         //実施期間
-        $sheet -> setCellValue("D" . $row_idx, $order->start_date . " ～ " . $order->end_date);
+        $sheet -> setCellValue("D" . $row_idx, $order->start_date->format("Y/m/d") . " ～ " . $order->end_date->format("Y/m/d"));
         
 
         
@@ -665,7 +665,7 @@ class PrintersController extends AppController {
            $order->work_place->holiday4,$order->work_place->holiday5,$order->work_place->holiday6,$order->work_place->holiday7];
            }
             //$week = [0,4];
-            $holidayCount = $this->Date->getHolidayCount($order->start_date, $order->end_date, $week,$given_holidays,false);
+            $holidayCount = $this->Date->getHolidayCount($order->start_date->format("Y-m-d"), $order->end_date->format("Y-m-d"), $week,$given_holidays,false);
             //debug($week);
             $num_o_days = $endDate->diff($startDate)->format('%a') + 1 - $holidayCount;
             //debug($num_o_days);die();
@@ -818,7 +818,7 @@ class PrintersController extends AppController {
 
     public function printWorkSheet($order_id){
         
-        Configure::write("debug",false);
+        Configure::write("debug",true);
         $default = ini_get('max_execution_time');
         set_time_limit(0);
     
@@ -889,7 +889,7 @@ class PrintersController extends AppController {
         $order->work_place->holiday4,$order->work_place->holiday5,$order->work_place->holiday6,$order->work_place->holiday7];
         }
         //$week = [0,4];
-        $holidayCount = $this->Date->getHolidayCount($order->start_date, $order->end_date, $week,$given_holidays,false);
+        $holidayCount = $this->Date->getHolidayCount($order->start_date->format("Y-m-d"), $order->end_date->format("Y-m-d"), $week,$given_holidays,false);
         //debug($week);
         $num_o_days = $endDate->diff($startDate)->format('%a') + 1 - $holidayCount;
         //debug($num_o_days);die();

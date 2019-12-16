@@ -129,11 +129,10 @@ class WorksController extends AppController
                    $week = explode(",", $work->order->work_place->holiday_numbers);
                }
                
-               $given_holidays = [$work->order->work_place->holiday1,$work->order->work_place->holiday2,$work->order->work_place->holiday3,
-           $work->order->work_place->holiday4,$work->order->work_place->holiday5,$work->order->work_place->holiday6,$work->order->work_place->holiday7];
+               $given_holidays = explode(",", $work->order->work_place->specific_holidays);
            }
           //$week = [0,4];
-            $holidayCount = $this->Date->getHolidayCount($work->order->start_date, $work->order->end_date, $week,$given_holidays,false);
+            $holidayCount = $this->Date->getHolidayCount($work->order->start_date->format("Y-m-d"), $work->order->end_date->format("Y-m-d"), $week,$given_holidays,false);
             //debug($week);
             $startDate = new \DateTime($work->order->start_date->format("Y-m-d"));
             $endDate = new \DateTime($work->order->end_date->format("Y-m-d"));            

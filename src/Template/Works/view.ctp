@@ -30,7 +30,7 @@
          
 <div class="form-group clearfix">
     <?php   echo $this->Form->label('date_range','期間',['class'=>'col-md-4']); ?>
-    <span class="formData" class="col-md-8" id="date-range"><?php echo $work->order->start_date . " ~ " . $work->order->end_date; ?></span>
+    <span class="formData" class="col-md-8" id="date-range"><?php echo $work->order->start_date->format("Y/m/d") . " ~ " . $work->order->end_date->format("Y/m/d"); ?></span>
 </div>         
 <div class="form-group clearfix">
     <?php   echo $this->Form->label('time_range','時間',['class'=>'col-md-4']); ?>
@@ -199,7 +199,11 @@
 </div>    <div class="col-md-6">
 <div class="form-group clearfix">
     <?php   echo $this->Form->label('A_date_range','使用期間',['class'=>'col-md-4']); ?>
-    <span class="formData" class="col-md-8" id="date-range"><?php echo $work->A_start_date . " ~ " . $work->A_end_date; ?></span>
+    <span class="formData" class="col-md-8" id="date-range"><?php
+    if(!empty($work->A_start_date)){
+        echo $work->A_start_date->format("Y/m/d") . " ~ " . $work->A_end_date->format("Y/m/d"); 
+    }
+    ?></span>
 </div>  </div> 
 
     <div class="col-md-6">        
@@ -211,7 +215,11 @@
 </div>    <div class="col-md-6">
 <div class="form-group clearfix">
     <?php   echo $this->Form->label('B_date_range','使用期間',['class'=>'col-md-4']); ?>
-    <span class="formData" class="col-md-8" id="date-range"><?php echo $work->B_start_date . " ~ " . $work->B_end_date; ?></span>
+    <span class="formData" class="col-md-8" id="date-range"><?php 
+    if(!empty($work->B_start_date)){
+        echo $work->B_start_date->format("Y/m/d") . " ~ " . $work->B_start_date->format("Y/m/d"); 
+    }
+     ?></span>
 </div>  </div> 
 
 
@@ -224,7 +232,11 @@
 </div>    <div class="col-md-6">
 <div class="form-group clearfix">
     <?php   echo $this->Form->label('C_date_range','使用期間',['class'=>'col-md-4']); ?>
-    <span class="formData" class="col-md-8" id="date-range"><?php echo $work->C_start_date . " ~ " . $work->C_end_date; ?></span>
+    <span class="formData" class="col-md-8" id="date-range"><?php 
+    if(!empty($work->C_start_date)){
+        echo $work->C_start_date->format("Y/m/d") . " ~ " . $work->C_start_date->format("Y/m/d"); 
+    }    
+    ?></span>
 </div>  </div> 
 
 
@@ -243,7 +255,11 @@
 </div>    <div class="col-md-6">
 <div class="form-group clearfix">
     <?php   echo $this->Form->label('D_date_range','使用期間',['class'=>'col-md-4']); ?>
-    <span class="formData" class="col-md-8" id="date-range"><?php echo $work->D_start_date . " ~ " . $work->D_end_date; ?></span>
+    <span class="formData" class="col-md-8" id="date-range"><?php 
+    if(!empty($work->D_start_date)){
+        echo $work->D_start_date->format("Y/m/d") . " ~ " . $work->D_start_date->format("Y/m/d"); 
+    }      
+    ?></span>
 </div>  </div> 
 
     <div class="col-md-6">        
@@ -255,7 +271,11 @@
 </div>    <div class="col-md-6">
 <div class="form-group clearfix">
     <?php   echo $this->Form->label('E_date_range','使用期間',['class'=>'col-md-4']); ?>
-    <span class="formData" class="col-md-8" id="date-range"><?php echo $work->E_start_date . " ~ " . $work->E_end_date; ?></span>
+    <span class="formData" class="col-md-8" id="date-range"><?php 
+    if(!empty($work->E_start_date)){
+        echo $work->E_start_date->format("Y/m/d") . " ~ " . $work->E_start_date->format("Y/m/d"); 
+    }     
+    ?></span>
 </div>  </div>          
          
        

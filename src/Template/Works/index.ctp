@@ -275,7 +275,7 @@ $this->Html->script([
               <?php foreach ($works as $work): ?>
               <tr>
                   <td><?= h($work->order->order_no) ?></td>
-                  <td><?= h($work->order->start_date . " ~ " . $work->order->end_date) ?></td>
+                  <td><?= h($work->order->start_date->format("Y/m/d") . " ~ " . $work->order->end_date->format("Y/m/d")) ?></td>
                   <td><?php
                   if(!empty($work->order->client)){
                       echo $work->order->client->name;
