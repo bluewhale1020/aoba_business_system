@@ -308,7 +308,8 @@ var business_partner_id = $("#business-partner-id").val();
 
  var data = {};
  var data ={'data[year]':year,'data[month]':month,
-    'data[id]':id,'data[business_partner_id]':business_partner_id};
+    'data[id]':id,'data[business_partner_id]':business_partner_id,
+      '_csrfToken':<?= json_encode($this->request->getParam('_csrfToken')); ?>};
     
 
 
@@ -341,7 +342,8 @@ var business_partner_id = $("#business-partner-id").val();
 
  var data = {};
  var data ={'data[year]':year,'data[month]':month,'data[mode]':mode,
-    'data[id]':id,'data[business_partner_id]':business_partner_id};
+    'data[id]':id,'data[business_partner_id]':business_partner_id,
+      '_csrfToken':<?= json_encode($this->request->getParam('_csrfToken')); ?>};
     
 
 

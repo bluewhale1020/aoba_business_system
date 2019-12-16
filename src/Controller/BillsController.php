@@ -508,7 +508,7 @@ class BillsController extends AppController
      */
     public function delete($back = 'index')
     {
-        //debug($this->request->data);die();
+        // debug($this->request->data);die();
         $this->request->allowMethod(['post', 'delete']);
         
         $id = $this->request->data['data']['id'];
@@ -559,6 +559,7 @@ class BillsController extends AppController
 
 
     function ajaxsavereceiveddate(){
+        // debug($this->request->data);die();
 
             // ajaxによる呼び出し？
         if($this->request->is("ajax")) {

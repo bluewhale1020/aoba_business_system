@@ -23,7 +23,7 @@ class ImportDataConversionsTableTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'app.ImportDataConversions'
+        // 'app.ImportDataConversions'
     ];
 
     /**

@@ -133,6 +133,8 @@ function loadsalesdata()
           $("#gross_profit").text(currency_fmt.format(parseData.total_sales.sales - parseData.total_sales.cost));
           if(parseData.order_count.total != 0){
             $("#charted_rate").text(per_fmt.format(parseData.order_count.charged /parseData.order_count.total));
+          }else{
+            $("#charted_rate").text(per_fmt.format(0));
           }
         
         },
@@ -360,7 +362,7 @@ Dashboard
                                   $payer_id = $order->work_place_id;
                                 }
                                 
-                                $targetDate =new \DateTime($order->end_date);
+                                $targetDate =new \DateTime($order->end_date->format("Y-m-d"));
                                 $year = $targetDate->format('Y');
                                 $month = $targetDate->format('m');
                                 echo $this->Form->create(null,['url' => ['controller' => 'account_receivables', 'action' => 'index'],

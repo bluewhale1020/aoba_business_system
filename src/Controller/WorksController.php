@@ -135,8 +135,8 @@ class WorksController extends AppController
           //$week = [0,4];
             $holidayCount = $this->Date->getHolidayCount($work->order->start_date, $work->order->end_date, $week,$given_holidays,false);
             //debug($week);
-            $startDate = new \DateTime($work->order->start_date);
-            $endDate = new \DateTime($work->order->end_date);            
+            $startDate = new \DateTime($work->order->start_date->format("Y-m-d"));
+            $endDate = new \DateTime($work->order->end_date->format("Y-m-d"));            
             
             $num_o_days = $endDate->diff($startDate)->format('%a') + 1 - $holidayCount;
                 //debug($num_o_days);die();

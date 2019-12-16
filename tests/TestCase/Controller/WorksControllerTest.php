@@ -32,6 +32,8 @@ class WorksControllerTest extends IntegrationTestCase
         'app.equipment_types',
         'app.equipment_rentals',
         'app.staffs',
+        'app.users',
+        'app.event_logs'
 
     ];
 

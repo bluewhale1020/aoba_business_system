@@ -27,6 +27,8 @@ class BillsControllerTest extends TestCase
         'app.Works',
         'app.WorkContents',
         'app.MyCompanies',
+        'app.users',
+        'app.event_logs'
     ];
 
     protected function setUserSession()
@@ -344,7 +346,8 @@ class BillsControllerTest extends TestCase
             'bill_id' => 1,          
             'value' => "2019-12-02",          
         ];
-        $this->post('/Bills/ajaxsavereceiveddate', $data);  
+        $this->post('/Bills/ajaxsavereceiveddate', $data); 
+        $this->assertResponseCode(200);  
         $query = $this->Bills->find()->where(['id' => 1])->first();
         $this->assertEquals($data['value'], $query->received_date->format('Y-m-d'));
     }

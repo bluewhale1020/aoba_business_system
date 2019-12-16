@@ -643,13 +643,13 @@ class PrintersController extends AppController {
             
             // 開始日
         
-            $startDate = new \DateTime($order->start_date);
+            $startDate = new \DateTime($order->start_date->format("Y-m-d"));
             
             $sheet->setCellValue( "C3",  $startDate->format('Y年m月d日　') . $week_str_list[$startDate->format('w')] );
  
             // 終了日
         
-             $endDate = new \DateTime($order->end_date);
+             $endDate = new \DateTime($order->end_date->format("Y-m-d"));
              
             // $sheet->setCellValue( "S2",  $endDate->format('Y年m月d日　') . $week_str_list[$endDate->format('w')] );
              
@@ -674,13 +674,13 @@ class PrintersController extends AppController {
  
             // 開始時間
         
-            $startTime = new \DateTime($order->start_time);
+            $startTime = new \DateTime($order->start_time->format("H:i:s"));
             
             $sheet->setCellValue( "C4",  $startTime->format('H:i'));
 
             // 終了時間
         
-            $endTime = new \DateTime($order->end_time);
+            $endTime = new \DateTime($order->end_time->format("H:i:s"));
             
             $sheet->setCellValue( "F4",$endTime->format('H:i'));
 
@@ -867,13 +867,13 @@ class PrintersController extends AppController {
             
         // 開始日
     
-        $startDate = new \DateTime($order->start_date);
+        $startDate = new \DateTime($order->start_date->format("Y-m-d"));
         
         $sheet->setCellValue( "H2",  $startDate->format('Y年m月d日　') . $week_str_list[$startDate->format('w')] );
 
         // 終了日
     
-        $endDate = new \DateTime($order->end_date);
+        $endDate = new \DateTime($order->end_date->format("Y-m-d"));
         
         $sheet->setCellValue( "S2",  $endDate->format('Y年m月d日　') . $week_str_list[$endDate->format('w')] );
         
@@ -899,13 +899,13 @@ class PrintersController extends AppController {
 
         // 開始時間
     
-        $startTime = new \DateTime($order->start_time);
+        $startTime = new \DateTime($order->start_time->format("H:i:s"));
         
         $sheet->setCellValue( "H4",  $startTime->format('H時i分'));
 
         // 終了時間
     
-        $endTime = new \DateTime($order->end_time);
+        $endTime = new \DateTime($order->end_time->format("H:i:s"));
         
         $sheet->setCellValue( "O4",$endTime->format('H時i分'));
 

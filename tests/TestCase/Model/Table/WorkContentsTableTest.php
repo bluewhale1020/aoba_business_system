@@ -24,17 +24,17 @@ class WorkContentsTableTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'app.work_contents',
-        'app.orders',
-        'app.clients',
-        'app.work_places',
-        'app.bills',
-        'app.business_partners',
-        'app.contract_rates',
-        'app.contract_types',
-        'app.capturing_regions',
-        'app.radiography_types',
-        'app.works'
+        // 'app.work_contents',
+        // 'app.orders',
+        // 'app.clients',
+        // 'app.work_places',
+        // 'app.bills',
+        // 'app.business_partners',
+        // 'app.contract_rates',
+        // 'app.contract_types',
+        // 'app.capturing_regions',
+        // 'app.radiography_types',
+        // 'app.works'
     ];
 
     /**

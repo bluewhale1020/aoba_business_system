@@ -204,7 +204,8 @@ function bill_search(){
 
   var data = {};
   var data ={'data[year]':year,'data[month]':month,
-      'data[id]':id,'data[business_partner_id]':0};
+      'data[id]':id,'data[business_partner_id]':0,
+      '_csrfToken':<?= json_encode($this->request->getParam('_csrfToken')); ?>};
     
   execPost(Url, data);
     

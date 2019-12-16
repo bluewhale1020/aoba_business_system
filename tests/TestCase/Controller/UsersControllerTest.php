@@ -21,7 +21,8 @@ class UsersControllerTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'app.Users'
+        'app.users',
+        'app.event_logs'
     ];
 
     protected function setUserSession()

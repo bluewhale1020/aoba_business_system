@@ -29,7 +29,9 @@ class OrdersControllerTest extends TestCase
         'app.WorkContents',
         'app.CapturingRegions',
         'app.FilmSizes',
-        'app.Works'
+        'app.Works',
+        'app.users',
+        'app.event_logs'
     ];
 
     protected function setUserSession()

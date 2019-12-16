@@ -24,9 +24,9 @@ class StatusesTableTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'app.statuses',
-        'app.equipments',
-        'app.equipment_types'
+        // 'app.statuses',
+        // 'app.equipments',
+        // 'app.equipment_types'
     ];
 
     /**

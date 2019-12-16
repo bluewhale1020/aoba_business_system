@@ -29,7 +29,8 @@ class ImportComponentTest extends TestCase
         'app.CapturingRegions',    
         'app.FilmSizes',    
         'app.orders',    
-        'app.works',    
+        'app.works',
+        'app.event_logs'    
     ];
 
     public $Import;

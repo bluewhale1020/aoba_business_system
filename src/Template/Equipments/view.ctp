@@ -134,8 +134,8 @@ $(document).ready(function(){
     <?php
     foreach ($eRentals as $key => $rentalDetail): ?>
         <tr>
-            <td><?= (new DateTime($rentalDetail->start_date))->format("Y-m-d")  ?></td> 
-            <td><?= (new DateTime($rentalDetail->end_date))->format("Y-m-d")  ?></td>  
+            <td><?= (new DateTime($rentalDetail->start_date->format("Y-m-d")))->format("Y-m-d")  ?></td> 
+            <td><?= (new DateTime($rentalDetail->end_date->format("Y-m-d")))->format("Y-m-d")  ?></td>  
             <td><?= $rentalDetail->work->order->work_place->name ?></td>
         </tr> 
 

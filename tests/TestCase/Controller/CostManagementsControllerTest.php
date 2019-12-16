@@ -26,7 +26,9 @@ class CostManagementsControllerTest extends TestCase
         'app.work_contents',
         'app.capturing_regions',
         'app.works',
-        'app.film_sizes'
+        'app.film_sizes',
+        'app.users',
+        'app.event_logs'
     ];
 
     protected function setUserSession()

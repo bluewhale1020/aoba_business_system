@@ -64,7 +64,7 @@ class BusinessPartnersTableTest extends TestCase
             'specific_holidays' => 'wefaf23,2019/10/02,2019/10/03',
         ]);
         $expected = [
-            'specific_holidays' => ['myRule' => '適切な年月書式ではありません。'],            
+            'specific_holidays' => ['checkHolidayDateFormat' => '適切な年月書式ではありません。'],            
         ];
         $this->assertEquals($expected, $bpartner->getErrors());
 
