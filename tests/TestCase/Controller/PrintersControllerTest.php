@@ -99,7 +99,7 @@ class PrintersControllerTest extends TestCase
             'end_mon'=>12,    
             ];        
 
-        $this->post('/Printers/printOpnumTable', $data);
+        $this->get('/Printers/printOpnumTable', $data);
         $this->assertResponseCode(200);        
  
         $this->assertEquals($filename,$this->viewVariable('filename'));         

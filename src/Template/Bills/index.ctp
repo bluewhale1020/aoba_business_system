@@ -658,11 +658,11 @@ echo $this->Form->input('date', array(
                     
                  ?></td> 
                 <td><?= $this->Number->format($bill['total_charge'],$fmt_option); ?> </td>                
-                <td><?= $bill['due_date']; ?></td>                                 
+                <td><?= $bill['due_date']->format("Y/m/d"); ?></td>                                 
                 <td ><?php
                 if(empty($bill['uncollectible'])){
                     echo $this->Form->input('received_date',[
-                    'value' => $bill['received_date'],
+                    'value' => !empty($bill['received_date'])? $bill['received_date']->format("Y-m-d"): "",
                     'label' => false,
                     'type' => 'text',
                     'class' => 'received_date',

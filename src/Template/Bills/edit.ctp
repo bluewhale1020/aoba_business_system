@@ -563,7 +563,7 @@ overflow: scroll;
                 'due_date',
                 array(  
                 'label' => '支払期限','type'=>'text',
-             //   'value'=> $thisDate->format("Y-m-t")
+                'value'=>$bill->due_date->format("Y-m-d")
             ));
         ?>
     <?php 

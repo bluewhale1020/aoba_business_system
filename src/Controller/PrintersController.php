@@ -29,13 +29,13 @@ class PrintersController extends AppController {
 
 		$default = ini_get('max_execution_time');
 		set_time_limit(0);
-
+        // debug($_GET);debug($this->request->data);
 		$this->EquipmentRentals = TableRegistry::get('EquipmentRentals');
-		
-		$start_year = (int)$this->request->data['start_year'];
-		$start_mon = (int)$this->request->data['start_mon'];
-		$end_year = (int)$this->request->data['end_year'];
-		$end_mon = (int)$this->request->data['end_mon'];
+
+        $start_year = (int)$this->request->query('start_year');
+		$start_mon = (int)$this->request->query('start_mon');
+		$end_year = (int)$this->request->query('end_year');
+		$end_mon = (int)$this->request->query('end_mon');
 
 		$m = $start_mon;
 		$y = $start_year;

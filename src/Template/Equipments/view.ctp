@@ -100,7 +100,7 @@ $(document).ready(function(){
                 <th scope="row">使用開始日</th>
                 <td><?php
                 if($equipment->has('install_date')){
-                    $datetime = (new DateTime($equipment->install_date))->format("Y/m/d");
+                    $datetime = $equipment->install_date->format("Y/m/d");
                     echo $datetime;
                 } ?></td>
                 

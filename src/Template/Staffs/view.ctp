@@ -36,7 +36,11 @@
         </tr>
         <tr>
             <th scope="row"><?= __('生年月日') ?></th>
-            <td><?= h($staff->birth_date) ?></td>
+            <td><?php
+                if(isset($staff->birth_date)){
+                    echo h($staff->birth_date->format("Y/m/d"));
+                }
+             ?></td>
         </tr> 
         <tr>
             <th scope="row"><?= __('性別') ?></th>
