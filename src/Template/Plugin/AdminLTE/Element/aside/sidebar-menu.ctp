@@ -77,8 +77,15 @@
             <?php //echo $this->cell('Payermenu')->render() ?>
         </ul>
     </li>    
-
-    <li><a href="<?php echo $this->Url->build(['controller'=>'statistics', 'action'=>'index']); ?>"><i class="fa fa-line-chart"></i> <span>統計資料</span></a></li>
+    <li class="treeview">
+        <a href="#">
+            <i class="fa fa-line-chart"></i> <span>統計資料</span> <i class="fa fa-angle-left pull-right"></i>
+        </a>
+        <ul class="treeview-menu">
+            <li><a href="<?php echo $this->Url->build(['controller'=>'statistics', 'action'=>'index']); ?>"><i class="fa fa-circle-o"></i> <span>稼働件数</span></a></li>
+            <li><a href="<?php echo $this->Url->build(['controller'=>'statistics', 'action'=>'sales-analysis']); ?>"><i class="fa fa-circle-o"></i> <span>売上分析</span></a></li>
+        </ul>
+    </li> 
     <li><a href="<?php echo $this->Url->build(['controller'=>'pages', 'action'=>'manual/tutorial']); ?>"><i class="fa fa-book"></i> <span>マニュアル</span></a></li>
 
 

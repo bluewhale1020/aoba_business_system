@@ -3,6 +3,8 @@ namespace App\Controller;
 
 use App\Controller\AppController;
 use Cake\ORM\TableRegistry;
+use App\Controller\Component\SalesStatComponent;
+
 /**
  * Dashboards Controller
  *
@@ -103,15 +105,15 @@ class DashboardsController  extends AppController
             $m = $start_mon;
             $y = $start_year;
             $x_scale = [];
-            while($end_year > $y || ($end_year === $y && $end_mon >= $m) ){
-                $x_scale[$y][] = $m;
-                $m++;
-              if($m > 12){ // loop to the next year
-                $m = 1;
-                $y++;
-              }
-            }            
-
+            // while($end_year > $y || ($end_year === $y && $end_mon >= $m) ){
+            //     $x_scale[$y][] = $m;
+            //     $m++;
+            //   if($m > 12){ // loop to the next year
+            //     $m = 1;
+            //     $y++;
+            //   }
+            // }            
+            $x_scale = SalesStatComponent::createXScaleForGraphdata($start_year,$start_mon,$end_year,$end_mon);
 
             $start_date = new \DateTime($start_year."-".$start_mon."-1");
             $end_date =  new \DateTime($end_year."-".$end_mon."-1");
@@ -120,16 +122,17 @@ class DashboardsController  extends AppController
 
             $data = [];
             // "[{"year":2019, "month":"10","sales":2500000}]"
+            $data = SalesStatComponent::getTimeSerialGraphdata($x_scale,$sum,"sales");
 
-            foreach ($x_scale as $year => $months) {
-                foreach ($months as $key => $month) {
-                    if(empty($sum[$year][$month])){
-                        $data[] = ["year"=>$year,"month"=>$month,"sales"=>0];
-                    }else{
-                        $data[] = ["year"=>$year,"month"=>$month,"sales"=>$sum[$year][$month]];
-                    }
-                }
-            }
+            // foreach ($x_scale as $year => $months) {
+            //     foreach ($months as $key => $month) {
+            //         if(empty($sum[$year][$month])){
+            //             $data[] = ["year"=>$year,"month"=>$month,"sales"=>0];
+            //         }else{
+            //             $data[] = ["year"=>$year,"month"=>$month,"sales"=>$sum[$year][$month]];
+            //         }
+            //     }
+            // }
             
             $order_count = $this->Orders->get_charged_order_count($start_date, $end_date);
             $total_sales = $this->Orders->get_total_sales($start_date, $end_date);

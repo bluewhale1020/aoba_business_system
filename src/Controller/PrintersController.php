@@ -12,6 +12,8 @@ use Cake\Log\Log;
 // use \PhpOffice\PhpWord\IOFactory;
 // use fpdi\FPDI;
 
+use App\Controller\Component\SalesStatComponent;
+
 ///vendor/phpoffice/phpword/src/PhpWord/PhpWord.php
 /**
  * Printers Controller
@@ -1502,4 +1504,86 @@ class PrintersController extends AppController {
         return  print_r($value_obj,true);
 
     }
+
+
+    public function printSalesAnalysisData()
+    {
+        $this->loadComponent('SalesStat');
+
+        $default = ini_get('max_execution_time');
+        set_time_limit(0);
+        // debug($_GET);debug($this->request->data);
+        $start_year = (int)$this->request->query('start_year');
+        $start_mon = (int)$this->request->query('start_mon');
+        $end_year = (int)$this->request->query('end_year');
+        $end_mon = (int)$this->request->query('end_mon');
+        
+        //グラフのX軸データを期間から作成
+        $x_scale = SalesStatComponent::createXScaleForGraphdata($start_year, $start_mon, $end_year, $end_mon);
+
+        // 期間データを取得
+        $start_date = new \DateTime($start_year."-".$start_mon."-1");
+        $end_date =  new \DateTime($end_year."-".$end_mon."-1");
+
+        // 売上・粗利率データ
+        $sales_profit = $this->SalesStat->getSalesProfit($start_date, $end_date);
+        //　取得した売上・粗利率データをX軸データに合わせてグラフデータを生成
+        $sales_profit = SalesStatComponent::getTimeSerialGraphdata($x_scale, $sales_profit, 'rowdata', [0,0]);
+
+
+    
+        $columns = ["月別売上・粗利率","売上高","粗利率"];
+
+        // データをCSV出力する
+
+        // 保存ファイルパス作成
+        $today = new \DateTime();
+        $filename = $today->format("y_m_d_") . 'sales_profit.csv';
+
+        $uploadDir = realpath(TMP);
+        $uploadDir .= DS . 'csvs' . DS;
+        $file_path = $uploadDir.$filename;
+        //ヘッダー
+        $data_array[] = $columns;
+        if (!empty($sales_profit)) {
+            foreach ($sales_profit as $key => $oneRecord) {
+                $rec_array = [
+                    $oneRecord['year']."年".$oneRecord['month']."月",
+                    $oneRecord['rowdata'][0],
+                    $oneRecord['rowdata'][1],
+                ];
+
+                // debug($rec_array);die();
+                $data_array[] = $rec_array;
+            }
+        }
+        
+        mb_convert_variables('SJIS-win', 'UTF-8', $data_array);
+        $fp = fopen($file_path, 'w');
+
+        foreach ($data_array as $line) {
+            fputcsv($fp, $line);
+        }
+            
+        fclose($fp);
+
+        // ファイルに書き込む
+        // $str_data = implode(",", $data_array);
+        // file_put_contents($file_path, mb_convert_encoding($str_data, "SJIS"));
+   
+        //////////////////////////////// csv 出力
+           
+        $this -> set('filename', $filename);
+    
+        $this -> set('path', $file_path);
+
+        $this->layout = false;
+  
+    
+        $this -> render("print_sales_analysis_data");
+
+
+        set_time_limit($default);
+    }
+
 }
