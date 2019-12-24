@@ -281,4 +281,93 @@ class PrintersControllerTest extends TestCase
 
     }
 
+
+    /**
+     * Test printSalesAnalysisData method
+     *
+     * @return void
+     */
+    public function testPrintSalesAnalysisData()
+    {
+        $token = 'my-csrf-token';
+        $this->cookie('csrfToken', $token);
+
+        $this->configRequest([
+            'headers' => [
+                'X-CSRF-Token' => $token,
+            ],
+        ]);        
+        $filename = (new \DateTime())->format("y_m_d_") . 'sales_profit.csv';
+        $expected = TMP.'csvs'. DS . $filename;
+
+        $data = [];        
+        $category = "sales_profit";
+        $data = [
+            'start_year'=>2019,    
+            'start_mon'=>10,    
+            'end_year'=>2019,    
+            'end_mon'=>12,    
+            ];        
+        $params = http_build_query($data);
+        $this->get('/Printers/printSalesAnalysisData/'.$category.'?'.$params);   
+        $this->assertResponseCode(200);  
+
+        $this->assertEquals($filename,$this->viewVariable('filename'));         
+        $this->assertEquals($expected,$this->viewVariable('path'));         
+        $this->assertTemplate('print_sales_analysis_data');
+        $this->assertResponseContains("2019");
+
+
+        $filename = (new \DateTime())->format("y_m_d_") . 'order_count.csv';
+        $expected = TMP.'csvs'. DS . $filename;
+      
+        $category = "order_count";
+       
+        $this->get('/Printers/printSalesAnalysisData/'.$category.'?'.$params);   
+        $this->assertResponseCode(200);  
+
+        $this->assertEquals($filename,$this->viewVariable('filename'));         
+        $this->assertEquals($expected,$this->viewVariable('path'));         
+        $this->assertResponseContains("2019");
+
+
+        $filename = (new \DateTime())->format("y_m_d_") . 'order_count_filmsize.csv';
+        $expected = TMP.'csvs'. DS . $filename;
+      
+        $category = "order_count_filmsize";
+       
+        $this->get('/Printers/printSalesAnalysisData/'.$category.'?'.$params);   
+        $this->assertResponseCode(200);  
+
+        $this->assertEquals($filename,$this->viewVariable('filename'));         
+        $this->assertEquals($expected,$this->viewVariable('path'));         
+        $this->assertResponseContains("100mm");
+
+
+        $filename = (new \DateTime())->format("y_m_d_") . 'sales_profit_partners.csv';
+        $expected = TMP.'csvs'. DS . $filename;
+      
+        $category = "sales_profit_partners";
+       
+        $this->get('/Printers/printSalesAnalysisData/'.$category.'?'.$params);   
+        $this->assertResponseCode(200);  
+
+        $this->assertEquals($filename,$this->viewVariable('filename'));         
+        $this->assertEquals($expected,$this->viewVariable('path'));         
+        $this->assertResponseNotEmpty();
+
+        $filename = (new \DateTime())->format("y_m_d_") . 'sales_profit_workcontents.csv';
+        $expected = TMP.'csvs'. DS . $filename;
+      
+        $category = "sales_profit_workcontents";
+       
+        $this->get('/Printers/printSalesAnalysisData/'.$category.'?'.$params);   
+        $this->assertResponseCode(200);  
+
+        $this->assertEquals($filename,$this->viewVariable('filename'));         
+        $this->assertEquals($expected,$this->viewVariable('path'));         
+        $this->assertResponseNotEmpty();
+
+    }
+
 }

@@ -106,7 +106,7 @@ function createStatTables(data, elem){
 }
 
 
-function printSalesAnalysisData(){
+function printSalesAnalysisData(category){
   
   //検索条件取得
   const params = jQuery.param({
@@ -117,7 +117,7 @@ function printSalesAnalysisData(){
   });
   
 
-   var Url = "/aoba_business_system/printers/print_sales_analysis_data?" + params;
+   var Url = "/aoba_business_system/printers/print_sales_analysis_data/"+ category +"?" + params;
    //urlはプロジェクト名/コントローラー名アンダーライン型/アクション名小文字
   
   
@@ -216,14 +216,26 @@ function printSalesAnalysisData(){
   </div>
 
     <div class="pull-right">
-      <?php 
 
-      echo $this->Form->button(' 統計データ出力', array(
-      'type' => 'button',
-      'div' => false,
-      'class' => 'btn btn-warning',
-      'onclick' =>"Javascript:printSalesAnalysisData();return false;"
-      ));     ?>
+    <div class="btn-group">
+  <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+   <i class="glyphicon glyphicon-print"></i>&nbsp;&nbsp; 統計データ出力 <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu">
+    <li><?= $this->Html->link(__('月別売上・粗利率'), "#",
+    ['onclick' =>"Javascript:printSalesAnalysisData('sales_profit');return false;"]) ?> </li>
+    <li><?= $this->Html->link(__('月別受注数'), "#",
+    ['onclick' =>"Javascript:printSalesAnalysisData('order_count');return false;"]) ?> </li>
+    <li><?= $this->Html->link(__('フィルムサイズ別受注数'), "#",
+    ['onclick' =>"Javascript:printSalesAnalysisData('order_count_filmsize');return false;"]) ?> </li>
+    <li><?= $this->Html->link(__('顧客別売上・粗利率'), "#",
+    ['onclick' =>"Javascript:printSalesAnalysisData('sales_profit_partners');return false;"]) ?> </li>
+    <li><?= $this->Html->link(__('業務別売上・粗利率'), "#",
+    ['onclick' =>"Javascript:printSalesAnalysisData('sales_profit_workcontents');return false;"]) ?> </li>
+
+  </ul>
+</div>
+
     </div>
 
 

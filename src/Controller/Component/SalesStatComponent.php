@@ -50,7 +50,7 @@ class SalesStatComponent extends Component
        ->where($conditions)
        ->group(['year' => 'YEAR(end_date)','month' => 'MONTH(end_date)'])
        ->all()->toArray();        
-       
+    //    debug($sum);
        // 各月の粗利率（売上ー費用／売上）を計算して各要素に追加
         foreach ($sum as $key => $row) {
             $profit_margin = ($row['sales'] - $row['cost'])/$row['sales'] * 100;
@@ -60,7 +60,7 @@ class SalesStatComponent extends Component
        // グラフデータ用に整形
        $data = Hash::combine($sum, '{n}.month', '{n}.rowdata','{n}.year');
         
-    //    debug($data);
+    //    debug($data);die();
         // データを返す
         return $data;        
     }
@@ -91,7 +91,7 @@ class SalesStatComponent extends Component
        // グラフデータ用に整形
        $data = Hash::combine($counts, '{n}.month', '{n}.count','{n}.year');
         
-        //    debug($data);
+        //    debug($data);die();
         // データを返す
         return $data;         
     }
@@ -113,7 +113,7 @@ class SalesStatComponent extends Component
         $counts = $query
        ->contain(['FilmSizes'])
        ->select(['FilmSizes.name',
-       'count' => $query->func()->count('*')
+       'rowdata' => $query->func()->count('*')
         ])          
        ->where($conditions)
        ->group(['FilmSizes.name'])
@@ -124,6 +124,8 @@ class SalesStatComponent extends Component
             unset($row['film_size']);
             return $row;
        });
+
+        // debug($result);die();       
        // データを返す
         return $result;
     }
@@ -168,6 +170,7 @@ class SalesStatComponent extends Component
             $temp['name'] = $row['work_content']['description'];
             $result[] = $temp;           
         } 
+        // debug($result);die();         
         // データを返す
         return $result; 
         
@@ -214,6 +217,8 @@ class SalesStatComponent extends Component
             $temp['name'] = $row['client']['name'];
             $result[] = $temp;           
         } 
+        // debug($result);die(); 
+
         // データを返す
         return $result;                
     }  

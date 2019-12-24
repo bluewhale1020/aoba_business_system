@@ -444,7 +444,7 @@ function drawSalesProfitChart(_sales_data){
     //labelsと値の取り出し
     for(const item of _order_data){
       labels.push(item.name);
-      data.push(item.count);
+      data.push(item.rowdata);
   
     }
     
@@ -511,19 +511,19 @@ function drawSalesProfitChart(_sales_data){
   }
   // 顧客別売上・粗利率
   function drawSalesProfitPartnersChart(_sales_data){
-  // "[{"name":"company","rowdata":[0,0]}]"
-  labels = [];
-  data = [];line_data = [];
-  //labelsと値の取り出し
-  Object.keys(_sales_data).forEach(function(key){
-    let short_name = shortenCorporateName(_sales_data[key].name);
-    labels.push(short_name);
-    data.push(_sales_data[key].rowdata[0]);
-    fmt_number = roundAtBase(_sales_data[key].rowdata[1], 100);
-    line_data.push(fmt_number); 
-    _sales_data[key].name = short_name;
-    _sales_data[key].rowdata[1] = fmt_number;
-  });
+    // "[{"name":"company","rowdata":[0,0]}]"
+    labels = [];
+    data = [];line_data = [];
+    //labelsと値の取り出し
+    Object.keys(_sales_data).forEach(function(key){
+      let short_name = shortenCorporateName(_sales_data[key].name);
+      labels.push(short_name);
+      data.push(_sales_data[key].rowdata[0]);
+      fmt_number = roundAtBase(_sales_data[key].rowdata[1], 100);
+      line_data.push(fmt_number); 
+      _sales_data[key].name = short_name;
+      _sales_data[key].rowdata[1] = fmt_number;
+    });
 
   
     // Get context with jQuery - using jQuery's .get() method.

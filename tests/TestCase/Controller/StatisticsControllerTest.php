@@ -20,10 +20,13 @@ class StatisticsControllerTest extends TestCase
      * @var array
      */
     public $fixtures = [
+        'app.business_partners',
         'app.EquipmentRentals',
         'app.Orders2',
         'app.Works',
-        'app.Equipments'
+        'app.Equipments',
+        'app.film_sizes',
+        'app.work_contents'        
     ];
 
     protected function setUserSession()
@@ -113,4 +116,45 @@ class StatisticsControllerTest extends TestCase
         $this->assertEquals($expected,$response ); 
 
     }
+
+
+    /**
+     * Test ajaxgetsalesanalysis method
+     *
+     * @return void
+     */
+    public function testAjaxgetsalesanalysis()
+    {
+        $token = 'my-csrf-token';
+        $this->cookie('csrfToken', $token);
+
+        $this->configRequest([
+            'headers' => [
+                'X-Requested-With' => 'XMLHttpRequest',
+                'X-CSRF-Token' => $token,
+            ],
+        ]);
+
+        $data = [
+        'start_year'=>2019,    
+        'start_mon'=>10,    
+        'end_year'=>2019,    
+        'end_mon'=>12,    
+        ];
+        $this->post('/statistics/ajaxgetsalesanalysis', $data);
+        $this->assertResponseCode(200);
+
+
+        $response = json_decode($this->_response->getBody(),true);
+        debug($response);        
+        $this->assertArrayHasKey('sales_profit', $response);
+        $this->assertArrayHasKey('order_count', $response);
+        $this->assertArrayHasKey('order_count_filmsizes', $response);
+        $this->assertArrayHasKey('sales_profit_partners', $response);
+        $this->assertArrayHasKey('sales_profit_workcontents', $response);
+
+    }
+
+
+
 }

@@ -1505,8 +1505,37 @@ class PrintersController extends AppController {
 
     }
 
+    //統計データとカラム名からCSVデータ配列の作成
+    protected function create_data_array_for_sales_analysis($stat_data,$columns)
+    {   
+        //ヘッダー
+        $data_array[] = $columns;
 
-    public function printSalesAnalysisData()
+        if (!empty($stat_data)) {
+            foreach ($stat_data as $key => $oneRecord) {
+                if(!empty($oneRecord['year'])){
+                    $row_header = $oneRecord['year']."年".$oneRecord['month']."月";
+                }else{
+                    $row_header = $oneRecord['name'];
+                }
+                $rec_array = [$row_header];
+                if(is_array($oneRecord['rowdata'])){
+                    foreach ($oneRecord['rowdata'] as $key => $value) {
+                        $rec_array[] = $value;
+                    }
+                }else{
+                    $rec_array[] = $oneRecord['rowdata'];
+                }
+
+                $data_array[] = $rec_array;
+            }
+        } 
+        
+        return $data_array;
+
+    }
+
+    public function printSalesAnalysisData($category = "sales_profit")
     {
         $this->loadComponent('SalesStat');
 
@@ -1517,46 +1546,76 @@ class PrintersController extends AppController {
         $start_mon = (int)$this->request->query('start_mon');
         $end_year = (int)$this->request->query('end_year');
         $end_mon = (int)$this->request->query('end_mon');
-        
-        //グラフのX軸データを期間から作成
-        $x_scale = SalesStatComponent::createXScaleForGraphdata($start_year, $start_mon, $end_year, $end_mon);
-
         // 期間データを取得
         $start_date = new \DateTime($start_year."-".$start_mon."-1");
         $end_date =  new \DateTime($end_year."-".$end_mon."-1");
+        
+        switch ($category) {
+            case 'sales_profit':
+                //グラフのX軸データを期間から作成
+                $x_scale = SalesStatComponent::createXScaleForGraphdata($start_year, $start_mon, $end_year, $end_mon);
 
-        // 売上・粗利率データ
-        $sales_profit = $this->SalesStat->getSalesProfit($start_date, $end_date);
-        //　取得した売上・粗利率データをX軸データに合わせてグラフデータを生成
-        $sales_profit = SalesStatComponent::getTimeSerialGraphdata($x_scale, $sales_profit, 'rowdata', [0,0]);
 
+                // 売上・粗利率データ
+                $sales_profit = $this->SalesStat->getSalesProfit($start_date, $end_date);
+                //　取得した売上・粗利率データをX軸データに合わせてグラフデータを生成
+                $stat_data = SalesStatComponent::getTimeSerialGraphdata($x_scale, $sales_profit, 'rowdata', [0,0]);
+            
+                $columns = ["月別売上・粗利率","売上高","粗利率"];              
 
-    
-        $columns = ["月別売上・粗利率","売上高","粗利率"];
+                break;
+            case 'order_count':
+                //グラフのX軸データを期間から作成
+                $x_scale = SalesStatComponent::createXScaleForGraphdata($start_year, $start_mon, $end_year, $end_mon);
+
+                // 受注数グラフデータ
+                $order_count = $this->SalesStat->getOrderCount($start_date, $end_date);
+                //　取得した受注数データをX軸データに合わせてグラフデータを生成
+                $stat_data = SalesStatComponent::getTimeSerialGraphdata($x_scale,$order_count);
+            
+                $columns = ["月別受注数","受注数"];            
+                
+                break;
+            case 'order_count_filmsize':
+
+                // フィルムサイズ受注数グラフデータ
+                $stat_data = $this->SalesStat->getOrderCountForFilmsizes($start_date, $end_date);
+            
+                $columns = ["フィルムサイズ","受注数"];             
+                
+                break;
+            case 'sales_profit_partners':
+
+                // 顧客別売上・粗利率データ
+                $stat_data = $this->SalesStat->getSalesProfitForPartners($start_date, $end_date);
+            
+                $columns = ["顧客名称","売上高","粗利率"];              
+                
+                break;
+            case 'sales_profit_workcontents':
+
+                // 業務別売上・粗利率データ
+                $stat_data = $this->SalesStat->getSalesProfitForWorkContents($start_date, $end_date);
+
+            
+                $columns = ["業務内容","売上高","粗利率"];               
+                
+                break;
+        }
+        
+        //CSVデータ配列の作成
+        $data_array = $this->create_data_array_for_sales_analysis($stat_data,$columns);
 
         // データをCSV出力する
 
         // 保存ファイルパス作成
         $today = new \DateTime();
-        $filename = $today->format("y_m_d_") . 'sales_profit.csv';
+        $filename = $today->format("y_m_d_") . $category.'.csv';
 
         $uploadDir = realpath(TMP);
         $uploadDir .= DS . 'csvs' . DS;
         $file_path = $uploadDir.$filename;
-        //ヘッダー
-        $data_array[] = $columns;
-        if (!empty($sales_profit)) {
-            foreach ($sales_profit as $key => $oneRecord) {
-                $rec_array = [
-                    $oneRecord['year']."年".$oneRecord['month']."月",
-                    $oneRecord['rowdata'][0],
-                    $oneRecord['rowdata'][1],
-                ];
 
-                // debug($rec_array);die();
-                $data_array[] = $rec_array;
-            }
-        }
         
         mb_convert_variables('SJIS-win', 'UTF-8', $data_array);
         $fp = fopen($file_path, 'w');
@@ -1566,10 +1625,6 @@ class PrintersController extends AppController {
         }
             
         fclose($fp);
-
-        // ファイルに書き込む
-        // $str_data = implode(",", $data_array);
-        // file_put_contents($file_path, mb_convert_encoding($str_data, "SJIS"));
    
         //////////////////////////////// csv 出力
            
