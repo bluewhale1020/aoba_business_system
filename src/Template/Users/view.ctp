@@ -49,11 +49,11 @@
         </tr>
         <tr>
             <th scope="row"><?= __('作成日') ?></th>
-            <td><?= h($user->created) ?></td>
+            <td><?= h($user->created->format("Y/m/d")) ?></td>
         </tr>
         <tr>
             <th scope="row"><?= __('最終更新日') ?></th>
-            <td><?= h($user->modified) ?></td>
+            <td><?= h($user->modified->format("Y/m/d")) ?></td>
         </tr>                                        
         </table>
     
@@ -81,7 +81,7 @@
             <thead>
                 <tr class="bg-navy disabled">
                     <th ><?= __('id') ?></th>
-                    <th ><?= __('作成日') ?></th>
+                    <th ><?= __('作成日時') ?></th>
                     <th ><?= __('イベント') ?></th>
                     <th ><?= __('テーブル名') ?></th>
                     <th ><?= __('レコードID') ?></th>
@@ -92,7 +92,7 @@
                 <?php foreach ($eventLogs as $eventLog): ?>
                 <tr>
                     <td><?= $this->Number->format($eventLog->id) ?></td>
-                    <td><?= h($eventLog->created) ?></td>
+                    <td><?= h($eventLog->created->format("Y/m/d H:i:s")) ?></td>
                     <td><?= h($eventLog->event) ?></td>
                     <td><?= h($eventLog->table_name) ?></td>
                     <td>

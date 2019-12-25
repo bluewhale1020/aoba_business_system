@@ -1,7 +1,7 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
   <h1>
-    Users
+    ユーザー
 
     <div class="pull-right"><?php echo $this->Html->link(__('New'), ['action' => 'add'], ['class'=>'btn btn-success btn-xs']) ?></div>
   </h1>
@@ -43,12 +43,12 @@
             <thead>
               <tr>
                   <th scope="col"><?= $this->Paginator->sort('id') ?></th>
-                  <th scope="col"><?= $this->Paginator->sort('username') ?></th>
-                  <th scope="col"><?= $this->Paginator->sort('role') ?></th>
-                  <th scope="col"><?= $this->Paginator->sort('formal_name') ?></th>
-                  <th scope="col"><?= $this->Paginator->sort('created') ?></th>
-                  <th scope="col"><?= $this->Paginator->sort('modified') ?></th>
-                  <th scope="col" class="actions text-center"><?= __('Actions') ?></th>
+                  <th scope="col"><?= $this->Paginator->sort('ユーザー名') ?></th>
+                  <th scope="col"><?= $this->Paginator->sort('役柄') ?></th>
+                  <th scope="col"><?= $this->Paginator->sort('正式名称') ?></th>
+                  <th scope="col"><?= $this->Paginator->sort('作成日') ?></th>
+                  <th scope="col"><?= $this->Paginator->sort('最終更新日') ?></th>
+                  <th scope="col" class="actions text-center"><?= __('操作') ?></th>
               </tr>
             </thead>
             <tbody>
@@ -58,8 +58,8 @@
                   <td><?= h($user->username) ?></td>
                   <td><?= h($user->role) ?></td>
                   <td><?= h($user->formal_name) ?></td>
-                  <td><?= h($user->created) ?></td>
-                  <td><?= h($user->modified) ?></td>
+                  <td><?= h($user->created->format("Y/m/d")) ?></td>
+                  <td><?= h($user->modified->format("Y/m/d")) ?></td>
                   <td class="actions text-right">
                       <?= $this->Html->link(__('View'), ['action' => 'view', $user->id], ['class'=>'btn btn-info btn-xs']) ?>
                       <?= $this->Html->link(__('Edit'), ['action' => 'edit', $user->id], ['class'=>'btn btn-warning btn-xs']) ?>

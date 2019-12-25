@@ -177,7 +177,7 @@ echo $this->Form->button(' ログを出力',[
       <thead>
              <tr class="bg-navy disabled">
                 <th ><?= __('id') ?></th>
-                <th ><?= __('作成日') ?></th>
+                <th ><?= __('作成日時') ?></th>
                 <th ><?= __('イベント') ?></th>
                 <th ><?= __('テーブル名') ?></th>
                 <th ><?= __('レコードID') ?></th>
@@ -189,7 +189,7 @@ echo $this->Form->button(' ログを出力',[
              <?php foreach ($eventLogs as $eventLog): ?>
             <tr>
                 <td><?= $this->Number->format($eventLog->id) ?></td>
-                <td><?= h($eventLog->created) ?></td>
+                <td><?= h($eventLog->created->format("Y/m/d H:i:s")) ?></td>
                 <td><?= h($eventLog->event) ?></td>
                 <td><?= h($eventLog->table_name) ?></td>
                 <td>
