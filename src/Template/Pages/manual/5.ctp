@@ -3,7 +3,7 @@
     <div id="alert_div"></div>
     <h1>その他
     
-    <small>統計資料ページとダッシュボード</small>
+    <small>統計資料・ダッシュボード・データインポート・イベントログ</small>
     </h1>
 </section>
 
@@ -55,6 +55,54 @@
     <!-- /.box-body -->
 </div>  
 </section>
+
+<section class="voffset4">
+    <div class="box box-solid">
+    <div class="box-header with-border">
+        <h3 class="box-title">統計資料:売上分析ページ</h3>
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body vertical-align">
+    <div class="col-md-4 vcenter">
+    <h4>【各種分析グラフ画面】</h4>
+    <div class="thumbnail text-center">
+    <a href="<?= $this->Url->image('manual/stat1.png') ?>" data-lightbox="stat1" data-title="売上分析グラフ1">
+                    <?php
+                        echo $this->Html->image("manual/stat1.png");
+                    ?>    
+                </a> 
+    </div>
+    <div class="thumbnail text-center">
+    <a href="<?= $this->Url->image('manual/stat2.png') ?>" data-lightbox="stat2" data-title="売上分析グラフ2">
+                    <?php
+                        echo $this->Html->image("manual/stat2.png");
+                    ?>    
+                </a> 
+    </div>     
+    </div>
+    <div class="col-md-8 vcenter text-large">
+        <div>
+            <p>表示される統計資料は以下の5種類</p>
+
+            <ul>
+                <li>売上・粗利率</li>
+                <li>受注数</li>
+                <li>フィルムサイズ別受注数</li>
+                <li>顧客別売上・粗利率</li>
+                <li>業務別売上・粗利率</li>
+            </ul>            
+            <p>期間を設定して検索するとページ下部の全てのテーブルとグラフが更新されます。<br>
+            また、上記の各統計データをCSVフォーマットで出力できます。
+            </p>
+        </div>
+    </div>
+
+
+    </div>
+    <!-- /.box-body -->
+</div>  
+</section>
+
 
 <section class="voffset4">
     <div class="box box-solid">
@@ -133,6 +181,48 @@
     <!-- /.box-body -->
 </div>  
 </section>
+
+
+<section class="voffset4">
+    <div class="box box-solid">
+    <div class="box-header with-border">
+        <h3 class="box-title">イベントログ(管理者用)</h3>
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body vertical-align">
+    <div class="col-md-4 vcenter">
+    <h4>【ユーザー閲覧画面】</h4>
+    <div class="thumbnail text-center">
+        <a href="<?= $this->Url->image('manual/user_log.png') ?>" data-lightbox="user_log" data-title="ユーザー閲覧画面">
+            <?php
+                echo $this->Html->image("manual/user_log.png");
+            ?>    
+        </a>        
+    </div>
+    <h4>【イベントログ一覧画面】</h4>    
+    <div class="thumbnail text-center">
+        <a href="<?= $this->Url->image('manual/eventlog.png') ?>" data-lightbox="eventlog" data-title="イベントログ一覧画面">
+            <?php
+                echo $this->Html->image("manual/eventlog.png");
+            ?>    
+        </a>        
+    </div>     
+    </div>
+    <div class="col-md-8 vcenter text-large">
+        <div>
+            <p>ユーザーのログイン・ログアウト情報、注文・作業・請求テーブル更新情報をイベントログとして記録します。
+            ログ情報は、イベントログページか、ユーザー閲覧ページの下部（そのユーザーのイベントログリスト）に表示されます。</p>
+            <p>イベントログ一覧画面へは、トップナビ右端の「設定」ドロップダウンリストからアクセスできます。</p>
+            <p>ログデータはCSVで出力できます。</p>
+        </div>
+    </div>
+    
+
+    </div>
+    <!-- /.box-body -->
+</div>  
+</section>
+
 
 </div>
 </div>
